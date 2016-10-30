@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sfc.jrdv.kidstimer">
     // Declare USAGE_STATS permisssion in manifest
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
@@ -31,7 +33,9 @@
         <service
             android:name=".LockServiceEjemplo1"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".BlockedActivity"></activity>
     </application>
 
 </manifest>

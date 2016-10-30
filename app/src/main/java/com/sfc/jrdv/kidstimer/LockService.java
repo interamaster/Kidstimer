@@ -5,11 +5,16 @@ import android.app.IntentService;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.jaredrummler.android.processes.AndroidProcesses;
+import com.jaredrummler.android.processes.models.AndroidAppProcess;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -23,12 +28,23 @@ import java.util.concurrent.TimeUnit;
 public class LockService extends Service {
 
     //String CURRENT_PACKAGE_NAME = {your this app packagename};
-    String CURRENT_PACKAGE_NAME ="com.sfc.jrdv.kidstimer";
-    String lastAppPN = "";
+    private String CURRENT_PACKAGE_NAME ="com.sfc.jrdv.kidstimer";
+    private String lastAppPN = "";
     boolean noDelay = false;
     public static LockService instance;
 
-    private TreeMap mySortedMap;
+    private AndroidProcesses ProcessManager;
+    private String packageName;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        BroadcastReceiver mReceiver = new ScreenReceiver();
+        registerReceiver(mReceiver, filter);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -36,6 +52,9 @@ public class LockService extends Service {
         // TODO: Return the communication channel to the service.
         return null;
     }
+
+
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -46,6 +65,18 @@ public class LockService extends Service {
         Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
 
         instance = this;
+
+
+
+
+        boolean screenOn = intent.getBooleanExtra("screen_state", false);
+        if (!screenOn) {
+            // YOUR CODE
+            Log.e("PANTALLA ENCENDIDA ", String.valueOf( screenOn));
+        } else {
+            // YOUR CODE
+            Log.e("PANTALLA APAGADA ", String.valueOf( screenOn));
+        }
 
         return START_STICKY;
     }
@@ -68,52 +99,17 @@ public class LockService extends Service {
                 }else{
                     //checkRunningApps2();
                     // retriveNewApp();
-                     gettopactivity();
+                     //gettopactivity();//con este hacen falta permisos
+                     getTopactivitySinPermisos();
                 }
             }
-        }, 0, 10000, TimeUnit.MILLISECONDS);
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
-
-
-
-    public void checkRunningApps2() {
-        ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        String activityOnTop;
-        if (Build.VERSION.SDK_INT > 20) {
-            activityOnTop = mActivityManager.getRunningAppProcesses().get(0).processName;
-        } else {
-            List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
-            ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
-            activityOnTop = ar.topActivity.getPackageName();
-        }
-
-        Log.e("activity on TOp", "" + activityOnTop);
-
-        // Provide the packagename(s) of apps here, you want to show password activity
-        if (activityOnTop.contains("whatsapp")  // you can make this check even better
-                || activityOnTop.contains(CURRENT_PACKAGE_NAME)) {
-            if (!(lastAppPN.equals(activityOnTop))) {
-                lastAppPN = activityOnTop;
-                Log.e("Whatsapp", "started");
-            }
-        } else {
-            if (lastAppPN.contains("whatsapp")) {
-                if (!(activityOnTop.equals(lastAppPN))) {
-                    Log.e("Whatsapp", "stoped");
-                    lastAppPN = "";
-                }
-            }
-            // DO nothing
-        }
-    }
-
-
-
-
 
 
 public void gettopactivity() {
 
+    //NECESITA PERMISOS !!!
 
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
         UsageStatsManager usm = (UsageStatsManager) getSystemService("usagestats");
@@ -139,6 +135,58 @@ public void gettopactivity() {
     }
 }
 
+
+
+public void getTopactivitySinPermisos(){
+
+        ActivityManager activityManager = (ActivityManager) getSystemService (Context.ACTIVITY_SERVICE);
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
+        {
+
+              packageName = activityManager.getRunningAppProcesses().get(0).processName;
+            // Log.v("INFO currentapp: ", packageName);
+        }
+        else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
+        {
+              packageName =  ProcessManager.getRunningForegroundApps(getApplicationContext()).get(0).getPackageName();
+            // Log.v("INFO currentapp: ", packageName);
+
+        }
+        else
+        {
+            String packageName = activityManager.getRunningTasks(1).get(0).topActivity.getPackageName();
+           // Log.v("INFO currentapp: ", packageName);
+        }
+
+
+
+        //para poner 1 solo log con la ultima abierta:
+
+        if (!(lastAppPN.equals(packageName))) {
+            lastAppPN = packageName;
+            Log.v("INFO currentapp: ", packageName);
+        }
+
+
+
+        // Provide the packagename(s) of apps here, you want to show password activity
+        if (lastAppPN.contains("whaatspp") || lastAppPN.contains(CURRENT_PACKAGE_NAME)) {
+
+            Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
+            // Show Password Activity
+        } else {
+            // DO nothing
+            Log.v("INFO  sE BLOQUEARIA: ",  lastAppPN);
+            /*
+            //TODO bloquear
+            Intent BlockedActivityIntent = new Intent(this, BlockedActivity.class);
+
+
+            startActivity(BlockedActivityIntent);
+            */
+        }
+    }
 
     public static void stop() {
         if (instance != null) {

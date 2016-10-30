@@ -25,5 +25,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.jaredrummler:android-processes:1.0.8'//para las lista app sin permisos especiales
     testCompile 'junit:junit:4.12'
 }
