@@ -244,7 +244,7 @@ public void getTopactivitySinPermisos(){
 
           */
 
-            Log.v("INFO currentapp: ", packageName);
+          //  Log.v("INFO currentapp: ", packageName);
         }
         else
         {
@@ -258,7 +258,7 @@ public void getTopactivitySinPermisos(){
 
         if (!(lastAppPN.equals(packageName))) {
             lastAppPN = packageName;
-            Log.v("INFO currentapp: ", packageName);
+            Log.v("INFO currentapp on get ", packageName);
         }
 
 
@@ -266,11 +266,11 @@ public void getTopactivitySinPermisos(){
         // Provide the packagename(s) of apps here, you want to show password activity
         if (lastAppPN.contains("whaatspp") || lastAppPN.contains(CURRENT_PACKAGE_NAME)) {
 
-            Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
+          //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
         } else {
             // DO nothing
-            Log.v("INFO  sE BLOQUEARIA: ",  lastAppPN);
+          //TODO quitar para ver logging : Log.v("INFO  sE BLOQUEARIA: ",  lastAppPN);
             /*
             //TODO bloquear
             Intent BlockedActivityIntent = new Intent(this, BlockedActivity.class);
