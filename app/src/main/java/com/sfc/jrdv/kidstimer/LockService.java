@@ -14,7 +14,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.jaredrummler.android.processes.AndroidProcesses;
+import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
+import com.jaredrummler.android.processes.models.AndroidProcess;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -33,7 +35,7 @@ public class LockService extends Service {
     boolean noDelay = false;
     public static LockService instance;
 
-    private AndroidProcesses ProcessManager;
+   // private AndroidProcesses ProcessManager;
     private String packageName;
 
     @Override
@@ -62,7 +64,7 @@ public class LockService extends Service {
 
         scheduleMethod();
         CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
-        Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
+       // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
 
         instance = this;
 
@@ -149,13 +151,40 @@ public void getTopactivitySinPermisos(){
         }
         else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
         {
-              packageName =  ProcessManager.getRunningForegroundApps(getApplicationContext()).get(0).getPackageName();
-            // Log.v("INFO currentapp: ", packageName);
 
+            List<AndroidAppProcess> processes2= AndroidProcesses.getRunningForegroundApps(getApplicationContext() );
+
+            if (processes2.size()>0){
+
+                packageName =  AndroidProcesses.getRunningForegroundApps(getApplicationContext()).get((processes2.size()-1)).getPackageName();
+            }
+
+            else
+            {
+
+
+
+              packageName =  AndroidProcesses.getRunningForegroundApps(getApplicationContext()).get(0).getPackageName();
+            // Log.v("INFO currentapp: ", packageName);
+            }
+
+            /*
+            List<AndroidAppProcess> processes2= AndroidProcesses.getRunningForegroundApps(getApplicationContext() );//esto da 2 apps en foreground ?¿?
+
+            //packageName =  AndroidProcesses.getRunningForegroundApps(getApplicationContext()).get(processes2.size()).getPackageName();
+
+            packageName=processes2.get(processes2.size()).getPackageName();
+
+
+          //  List<AndroidAppProcess> processes = AndroidProcesses.getRunningAppProcesses();//esto da too los procesos que haya  >20!!
+
+          */
+
+            Log.v("INFO currentapp: ", packageName);
         }
         else
         {
-            String packageName = activityManager.getRunningTasks(1).get(0).topActivity.getPackageName();
+             packageName = activityManager.getRunningTasks(1).get(0).topActivity.getPackageName();
            // Log.v("INFO currentapp: ", packageName);
         }
 
@@ -191,6 +220,9 @@ public void getTopactivitySinPermisos(){
     public static void stop() {
         if (instance != null) {
             instance.stopSelf();
+
+            Log.v("INFO  ",  "proceso parado!!!");
+
         }
     }
 }
