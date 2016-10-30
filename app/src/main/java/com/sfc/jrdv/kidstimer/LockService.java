@@ -1,7 +1,6 @@
 package com.sfc.jrdv.kidstimer;
 
 import android.app.ActivityManager;
-import android.app.IntentService;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -11,17 +10,22 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.jaredrummler.android.processes.AndroidProcesses;
-import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
-import com.jaredrummler.android.processes.models.AndroidProcess;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,7 +45,13 @@ public class LockService extends Service {
 
     CountDownTimer cdt = null;
 
-    private long total = 30000;//aqui se guardar el tiempo total!!!!
+    private long tiempoTotalParaJugar = 30000;//aqui se guardar el tiempo tiempoTotalParaJugar!!!!
+
+    //para saber el dia de la semana:
+    private static Timer timer = new Timer();
+    private Context ctx;
+
+
 
 
     @Override
@@ -56,17 +66,24 @@ public class LockService extends Service {
         registerReceiver(mReceiver, filter);
 
 
+        ctx = this;
+
+
+        //emepezamos el timer de cada 24h at nidnight
+        startTimerNewDay();
+
+
 
         Log.i("INFO", "Starting timer on create...");
         //en oncreate iniciamos el timer con el timepo predefinido:
 
-        cdt = new CountDownTimer(total, 1000) {
+        cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
                 Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
-                //update total with the remaining time left
-                total = millisUntilFinished;
+                //update tiempoTotalParaJugar with the remaining time left
+                tiempoTotalParaJugar = millisUntilFinished;
 
             }
 
@@ -80,6 +97,64 @@ public class LockService extends Service {
 
         cdt.start();
     }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////24 h timer//////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ private void startTimerNewDay() {
+
+
+     // Schedule to run every day in midnight
+
+    // today
+     Calendar date = new GregorianCalendar();
+     date.setTime(new Date());
+
+     date.set(Calendar.HOUR_OF_DAY, 00);
+     date.set(Calendar.MINUTE, 00);
+     date.set(Calendar.SECOND, 0);
+     date.set(Calendar.MILLISECOND, 0);
+
+
+
+       //  int period = 10000;//10secs
+        int perioddia= 1000 * 60 * 60 * 24 * 7;//24h
+
+         timer.schedule(new mainTask(), date.getTime(), perioddia );
+
+
+
+        //original se repite cada 15 segs:
+       // timer.scheduleAtFixedRate(new mainTask(), 0, 15000);//pruebo con 50 segs
+    }
+
+ private class mainTask extends TimerTask
+    {
+        public void run()
+        {
+            toastHandler.sendEmptyMessage(0);
+            Log.i("INFO", "ES UN NUEVO DIA!!!");
+
+            //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
+
+
+        }
+    }
+
+
+ private final Handler toastHandler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+            Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -115,13 +190,13 @@ public class LockService extends Service {
             Log.i("INFO", "Restarting  timer...");
             cdt.cancel();
 
-            cdt = new CountDownTimer(total, 1000) {
+            cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
 
                     Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
-                    //update total with the remaining time left
-                    total = millisUntilFinished;
+                    //update tiempoTotalParaJugar with the remaining time left
+                    tiempoTotalParaJugar = millisUntilFinished;
 
                 }
 
