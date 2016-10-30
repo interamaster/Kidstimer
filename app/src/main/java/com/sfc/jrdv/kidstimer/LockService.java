@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -38,14 +39,46 @@ public class LockService extends Service {
    // private AndroidProcesses ProcessManager;
     private String packageName;
 
+    CountDownTimer cdt = null;
+
+    private long total = 30000;//aqui se guardar el tiempo total!!!!
+
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+
         // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         BroadcastReceiver mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
+
+
+
+        Log.i("INFO", "Starting timer on create...");
+        //en oncreate iniciamos el timer con el timepo predefinido:
+
+        cdt = new CountDownTimer(total, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
+                //update total with the remaining time left
+                total = millisUntilFinished;
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                //TODO se acabo la tablet!!
+                Log.i("INFO", "Timer finished");
+            }
+        };
+
+        cdt.start();
     }
 
     @Override
@@ -75,9 +108,40 @@ public class LockService extends Service {
         if (!screenOn) {
             // YOUR CODE
             Log.e("PANTALLA ENCENDIDA ", String.valueOf( screenOn));
+
+            //reiniciamos el timercountdown
+            //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
+
+            Log.i("INFO", "Restarting  timer...");
+            cdt.cancel();
+
+            cdt = new CountDownTimer(total, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                    Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
+                    //update total with the remaining time left
+                    total = millisUntilFinished;
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    //TODO se acabo la tablet!!
+                    Log.i("INFO", "Timer finished");
+                }
+            };
+
+
+
+            cdt.start();
+
         } else {
             // YOUR CODE
             Log.e("PANTALLA APAGADA ", String.valueOf( screenOn));
+
+            cdt.cancel();
         }
 
         return START_STICKY;
@@ -217,11 +281,23 @@ public void getTopactivitySinPermisos(){
         }
     }
 
+    @Override
+    public void onDestroy() {
+
+        cdt.cancel();
+        Log.i("INFO", "Timer cancelled");
+        super.onDestroy();
+    }
+
+
+
+
     public static void stop() {
         if (instance != null) {
             instance.stopSelf();
 
             Log.v("INFO  ",  "proceso parado!!!");
+
 
         }
     }
