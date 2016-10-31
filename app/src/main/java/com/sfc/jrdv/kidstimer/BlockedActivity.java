@@ -24,5 +24,19 @@ public class BlockedActivity extends AppCompatActivity {
 
 
         finish();
+
+
+
+        /*
+
+        IDEM PARA CANCEL:IR AL HOME SCREEN:
+        Intent startHomescreen=new Intent(Intent.ACTION_MAIN);
+        startHomescreen.addCategory(Intent.CATEGORY_HOME);
+        startHomescreen.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(startHomescreen);
+         */
     }
+
+
+
 }

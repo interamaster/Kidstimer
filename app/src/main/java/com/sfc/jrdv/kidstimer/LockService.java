@@ -1,6 +1,8 @@
 package com.sfc.jrdv.kidstimer;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -15,6 +17,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -62,6 +65,10 @@ public class LockService extends Service {
     public static final String  EXTRA_MESSAGE="mensaje";
     public static final String  EXTRA_TIME="time";
 
+//para la notificacion
+
+    private NotificationCompat.Builder mBuilder = null;
+    private NotificationManager mNotificationManager;
 
 
     @Override
@@ -658,6 +665,13 @@ public void getTopactivitySinPermisos(){
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(lockIntent);
         }
+
+
+        //ACTUALIZAMOS LA NOTIFICACION
+
+    refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
+
+
     }
 
     @Override
@@ -686,4 +700,42 @@ public void getTopactivitySinPermisos(){
 
         }
     }
+
+
+
+
+
+
+    public void refreshNotifications( String message) {
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if(mBuilder == null) {
+            mBuilder = new NotificationCompat.Builder(mContext);
+            mBuilder.setAutoCancel(false);
+            mBuilder.setOngoing(true);
+            mBuilder.setOnlyAlertOnce(true);
+            mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
+            mBuilder.setSmallIcon(R.drawable.timer_icono);
+            mBuilder.setOngoing(true);
+           // mBuilder.setContentTitle(mContext.getString(R.string.downloading_file));
+            mBuilder.setContentTitle("titulo");
+        }
+        // Sets an ID for the notification, so it can be updated
+        int notifyID = 1;
+        int numMessages = 0;
+
+       // mBuilder.setContentText(mContext.getString(R.string.total_progress, percentProgress));
+       // mBuilder.setContentText("Texto de Notificacion");
+       // mNotificationManager.notify(notifyID, mBuilder.build());
+
+        // Start of a loop that processes data and then notifies the user
+        mBuilder.setContentText(message).setNumber(++numMessages);
+        // Because the ID remains unchanged, the existing notification is updated.
+        mNotificationManager.notify(
+                notifyID,
+                mBuilder.build());
+    }
+
+
+
 }
