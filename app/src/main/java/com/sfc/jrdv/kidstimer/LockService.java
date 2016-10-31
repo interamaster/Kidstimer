@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
@@ -74,8 +75,41 @@ public class LockService extends Service {
 
 
 
-        Log.i("INFO", "Starting timer on create...");
+        Log.i("INFO", "Starting TIEMPO DE JUEGO TIMER  on create...");
         //en oncreate iniciamos el timer con el timepo predefinido:
+
+        //lo hacemos desde la funcion que calcula que dia es y segun el dia le da un tiempo:
+
+        CalcularNewDayTime4Play();
+
+                // una vez sabida la cantidad creamos el timer!!
+                //no lo podemois hacer en una funcion aparate porque da crash!!
+/*
+//ESTE TIMER SE EJECUTA PERO SE BORRA DE INMEDIATO CON EL DEL ONSTARTCOMMAND, ASI QUE LO QUITO
+        cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                Log.i("INFO", "Countdown seconds remaining on create: " + millisUntilFinished / 1000);
+                //update tiempoTotalParaJugar with the remaining time left
+                tiempoTotalParaJugar = millisUntilFinished;
+                // TODO CREAR NOTIFICACION QUE ACTUALIZE EL TIMEPO RESTANTE Y QUE SE QUITE AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                //TODO se acabo la tablet!!
+                Log.i("INFO", "Timer finished");
+            }
+        };
+
+        cdt.start();
+*/
+
+        /*
+        //lo hacemos en metodo:
 
         cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
             @Override
@@ -96,7 +130,95 @@ public class LockService extends Service {
         };
 
         cdt.start();
+
+        */
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////TIEMPO DE JUEGO TIMER//////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private void TimerTiempoJuegoIniciarOajustar(){
+
+
+        //TODO pte implemntar logica si el servicio se ha parado para que no empieze de neuvo el timer
+        //aqui ya sabemos el valor de  : tiempoTotalParaJugar
+        //ESTE METODO NO SE PUEDE LLMAR DESDE ONCREATE!!!!
+        //PERO SI DESDE ONSTARTCOMMAND!!!
+        //NI SIQUIERA CON EL HANDLER ESTE:
+/*
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                     @Override
+                                                     public void run() {
+
+                                                         cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
+                                                             @Override
+                                                             public void onTick(long millisUntilFinished) {
+
+                                                                 Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar: " + millisUntilFinished / 1000);
+                                                                 //update tiempoTotalParaJugar with the remaining time left
+                                                                 tiempoTotalParaJugar = millisUntilFinished;
+                                                                 //   AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
+
+                                                             }
+
+                                                             @Override
+                                                             public void onFinish() {
+
+                                                                 //
+                                                                 Log.i("INFO", "Timer finished");
+                                                             }
+                                                         };
+
+                                                         cdt.start();
+                                                     }
+
+                                                 });
+
+
+
+*/
+
+        //ASI Q LO DEJAMOS COMO ESTABA PERO DESDE ON CREATE NO SE LLAMARA!!
+        //original:
+
+        //CON ESTO DEL LOOPER SE ARREGLA!!!!
+
+        Looper.getMainLooper();
+
+        if(Looper.myLooper() == null){
+            Looper.prepare();
+        }
+
+        cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
+                //update tiempoTotalParaJugar with the remaining time left
+                tiempoTotalParaJugar = millisUntilFinished;
+                // TODO ACTUALIZAR NOTIFICACION QUE ACTUALIZE EL TIMEPO RESTANTE Y QUE SE QUITE AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                //TODO se acabo la tablet!!
+                Log.i("INFO", "Timer finished");
+            }
+        };
+
+        cdt.start();
+
+
+
+
+
+    }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////24 h timer//////////////////////////////////////////////////////////
@@ -111,8 +233,8 @@ public class LockService extends Service {
      Calendar date = new GregorianCalendar();
      date.setTime(new Date());
 
-     date.set(Calendar.HOUR_OF_DAY, 00);
-     date.set(Calendar.MINUTE, 00);
+     date.set(Calendar.HOUR_OF_DAY, 10);
+     date.set(Calendar.MINUTE, 51);
      date.set(Calendar.SECOND, 0);
      date.set(Calendar.MILLISECOND, 0);
 
@@ -122,6 +244,7 @@ public class LockService extends Service {
         int perioddia= 1000 * 60 * 60 * 24 * 7;//24h
 
          timer.schedule(new mainTask(), date.getTime(), perioddia );
+     //TODO PX EL TIMER SE EJECUTA AL CREARLO  TAMBIEN?¿?
 
 
 
@@ -131,19 +254,107 @@ public class LockService extends Service {
 
  private class mainTask extends TimerTask
     {
+
         public void run()
         {
-            toastHandler.sendEmptyMessage(0);
+            toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
             Log.i("INFO", "ES UN NUEVO DIA!!!");
 
             //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
+          CalcularNewDayTime4Play();
+
+
+            //si existe timer lo paramos
+            if (cdt!=null){
+                cdt.cancel();
+            }
+
+
+            //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+            TimerTiempoJuegoIniciarOajustar();
+
+
+
 
 
         }
     }
 
 
- private final Handler toastHandler = new Handler()
+
+
+    private void CalcularNewDayTime4Play(){
+
+
+
+    //1º)PARAMOS EL TIMER
+
+    //si existe timer lo paramos
+    if (cdt!=null){
+        cdt.cancel();
+    }
+
+
+    Calendar calendar = Calendar.getInstance();
+    int day = calendar.get(Calendar.DAY_OF_WEEK);
+
+    switch (day) {
+
+
+        case Calendar.MONDAY:
+            // Current day is Monday
+            //entre semana 1 HORA
+            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+
+            break;
+
+        case Calendar.TUESDAY:
+            //entre semana 1 HORA
+            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+
+            break;
+
+        case Calendar.WEDNESDAY:
+            //entre semana 1 HORA
+            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+
+            break;
+
+
+        case Calendar.THURSDAY:
+            //entre semana 1 HORA
+            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+
+
+            break;
+
+        case Calendar.FRIDAY:
+            //entre semana 1 HORA
+            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+
+
+            break;
+
+        case Calendar.SATURDAY:
+            //entre semana 1 HORA
+            tiempoTotalParaJugar = 3*60 * 60 * 1000;
+
+
+            break;
+
+        case Calendar.SUNDAY:
+            //entre semana 1 HORA
+            tiempoTotalParaJugar =3*60 * 60 * 1000;
+
+            break;
+    }
+    //una vez sepamos el dia que ajuste el Timerdel timepo de jeugo con este valor: en TimerTiempoJuegoIniciarOajustar()
+    //no px da erro de thread ?¿?
+   // TimerTiempoJuegoIniciarOajustar();
+
+}
+
+ private final Handler toastHandler = new Handler() //TODO REEMPLZAR POR NOTIFICACION
     {
         @Override
         public void handleMessage(Message msg)
@@ -164,11 +375,17 @@ public class LockService extends Service {
     }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////METODO QUE SE EJECUTA CADA VEZ QUE SE RELANZA ESTE SERVICE//////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO Auto-generated method stub
+        // TODO OJO ESTE METODO SE EJECUTA CADA VEZ QUE SE LANZA UN INTENT DE ESTE SERVICE
+        //SI YA ESTABA CREADO!!!
+        //ASI QUE ES LA MEJO MANERA DE ACTUALIZAR LA INFO!!
+
 
         scheduleMethod();
         CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
@@ -188,8 +405,19 @@ public class LockService extends Service {
             //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
 
             Log.i("INFO", "Restarting  timer...");
-            cdt.cancel();
 
+            //si existe timer lo paramos
+            if (cdt!=null){
+                cdt.cancel();
+            }
+
+            //reakustamos el timer al encender pantalla
+
+            TimerTiempoJuegoIniciarOajustar();
+
+
+            /*
+            //lo hacemos emjor llmando al metodo creado
             cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -212,6 +440,8 @@ public class LockService extends Service {
 
             cdt.start();
 
+            */
+
         } else {
             // YOUR CODE
             Log.e("PANTALLA APAGADA ", String.valueOf( screenOn));
@@ -222,8 +452,13 @@ public class LockService extends Service {
         return START_STICKY;
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void scheduleMethod() {
-        // TODO Auto-generated method stub
+
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new Runnable() {
