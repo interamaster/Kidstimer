@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.ProviderInfo;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -18,13 +19,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.jaredrummler.android.processes.AndroidProcesses;
+import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
@@ -37,6 +41,7 @@ public class LockService extends Service {
 
     //String CURRENT_PACKAGE_NAME = {your this app packagename};
     private String CURRENT_PACKAGE_NAME ="com.sfc.jrdv.kidstimer";
+    private String PACKAGEMALDITO1="com.google.android.gms";//el home screen de LL
     private String lastAppPN = "";
     boolean noDelay = false;
     public static LockService instance;
@@ -50,7 +55,7 @@ public class LockService extends Service {
 
     //para saber el dia de la semana:
     private static Timer timer = new Timer();
-    private Context ctx;
+    private Context mContext;
 
 
 
@@ -67,7 +72,7 @@ public class LockService extends Service {
         registerReceiver(mReceiver, filter);
 
 
-        ctx = this;
+        mContext = this;
 
 
         //emepezamos el timer de cada 24h at nidnight
@@ -93,14 +98,14 @@ public class LockService extends Service {
                 Log.i("INFO", "Countdown seconds remaining on create: " + millisUntilFinished / 1000);
                 //update tiempoTotalParaJugar with the remaining time left
                 tiempoTotalParaJugar = millisUntilFinished;
-                // TODO CREAR NOTIFICACION QUE ACTUALIZE EL TIMEPO RESTANTE Y QUE SE QUITE AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
+                //   CREAR NOTIFICACION QUE ACTUALIZE EL TIMEPO RESTANTE Y QUE SE QUITE AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
 
             }
 
             @Override
             public void onFinish() {
 
-                //TODO se acabo la tablet!!
+
                 Log.i("INFO", "Timer finished");
             }
         };
@@ -124,7 +129,7 @@ public class LockService extends Service {
             @Override
             public void onFinish() {
 
-                //TODO se acabo la tablet!!
+                //
                 Log.i("INFO", "Timer finished");
             }
         };
@@ -233,8 +238,8 @@ public class LockService extends Service {
      Calendar date = new GregorianCalendar();
      date.setTime(new Date());
 
-     date.set(Calendar.HOUR_OF_DAY, 10);
-     date.set(Calendar.MINUTE, 51);
+     date.set(Calendar.HOUR_OF_DAY, 00);
+     date.set(Calendar.MINUTE, 00);
      date.set(Calendar.SECOND, 0);
      date.set(Calendar.MILLISECOND, 0);
 
@@ -388,32 +393,34 @@ public class LockService extends Service {
 
 
         scheduleMethod();
+
         CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
        // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
 
         instance = this;
 
 
+        if(intent!=null) {
 
 
-        boolean screenOn = intent.getBooleanExtra("screen_state", false);
-        if (!screenOn) {
-            // YOUR CODE
-            Log.e("PANTALLA ENCENDIDA ", String.valueOf( screenOn));
+            boolean screenOn = intent.getBooleanExtra("screen_state", false);
+            if (!screenOn) {
+                // YOUR CODE
+                Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
 
-            //reiniciamos el timercountdown
-            //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
+                //reiniciamos el timercountdown
+                //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
 
-            Log.i("INFO", "Restarting  timer...");
+                Log.i("INFO", "Restarting  timer...");
 
-            //si existe timer lo paramos
-            if (cdt!=null){
-                cdt.cancel();
-            }
+                //si existe timer lo paramos
+                if (cdt != null) {
+                    cdt.cancel();
+                }
 
-            //reakustamos el timer al encender pantalla
+                //reakustamos el timer al encender pantalla
 
-            TimerTiempoJuegoIniciarOajustar();
+                TimerTiempoJuegoIniciarOajustar();
 
 
             /*
@@ -431,7 +438,7 @@ public class LockService extends Service {
                 @Override
                 public void onFinish() {
 
-                    //TODO se acabo la tablet!!
+                    //  se acabo la tablet!!
                     Log.i("INFO", "Timer finished");
                 }
             };
@@ -442,11 +449,13 @@ public class LockService extends Service {
 
             */
 
-        } else {
-            // YOUR CODE
-            Log.e("PANTALLA APAGADA ", String.valueOf( screenOn));
+            } else {
+                // YOUR CODE
+                Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
-            cdt.cancel();
+                cdt.cancel();
+            }
+
         }
 
         return START_STICKY;
@@ -476,7 +485,8 @@ public class LockService extends Service {
                     //checkRunningApps2();
                     // retriveNewApp();
                      //gettopactivity();//con este hacen falta permisos
-                     getTopactivitySinPermisos();
+                      getTopactivitySinPermisos();
+                     //newgettopactivity();//ESTE TAMBIEN FUNCIONA EN LL
                 }
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
@@ -508,6 +518,53 @@ public void gettopactivity() {
         String currentApp = am.getRunningTasks(1).get(0).topActivity.getPackageName();
         Log.v("INFO currentapp: ", currentApp);
 
+    }
+}
+
+
+public void newgettopactivity(){
+    /*
+    //TODO ESTE METODO TAMBIEN FUNCIONA y SERIA MEJOR SI HUBIER UNA LISTA DE APS A BLOQUEAR:
+   // http://stackoverflow.com/questions/36954701/how-to-display-lock-activity-quickly-when-user-click-on-another-installed-applic
+
+     */
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { //For versions less than lollipop
+        ActivityManager am = ((ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE));
+        List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(5);
+        packageName = taskInfo.get(0).topActivity.getPackageName();
+        Log.v("INFO NEW", "top from Receiver app = " + packageName);
+        for (ActivityManager.RunningTaskInfo info : taskInfo) {
+            if (info.topActivity.getPackageName().equalsIgnoreCase("com.google.android.gms")) {
+
+            }
+        }
+    } else { //For versions Lollipop and above
+        List<AndroidAppProcess> processes = AndroidProcesses.getRunningForegroundApps(mContext.getApplicationContext());
+        Collections.sort(processes, new ProcessManager.ProcessComparator());
+        for (int i = 0; i <= processes.size() - 1; i++) {
+            if (!processes.get(i).name.isEmpty()) {
+                packageName = processes.get(i).name;
+
+                Log.e("INFO NEW", "top from Receiver app=" + packageName);
+
+
+
+
+            }
+            if (processes.get(i).name.equalsIgnoreCase("com.google.android.gms")) { //always the package name above/below this package is the top app
+                if ((i + 1) <= processes.size() - 1) { //If processes.get(i+1) available, then that app is the top app
+                    packageName = processes.get(i + 1).name;
+                } else if (i != 0) { //If the last package name is "com.google.android.gms" then the package name above this is the top app
+                    packageName = processes.get(i - 1).name;
+                } else {
+                    if (i == processes.size() - 1) { //If only one package name available
+                        packageName = processes.get(i).name;
+                    }
+                }
+                Log.v("INFO NEW", "top app from Receiver = " + packageName);
+            }
+        }
     }
 }
 
@@ -574,7 +631,7 @@ public void getTopactivitySinPermisos(){
 
 
         // Provide the packagename(s) of apps here, you want to show password activity
-        if (lastAppPN.contains("whaatspp") || lastAppPN.contains(CURRENT_PACKAGE_NAME)) {
+        if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) && tiempoTotalParaJugar>=3520000) {
 
           //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
@@ -588,6 +645,10 @@ public void getTopactivitySinPermisos(){
 
             startActivity(BlockedActivityIntent);
             */
+
+            Intent lockIntent = new Intent(mContext, BlockedActivity.class);
+            lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(lockIntent);
         }
     }
 
@@ -597,6 +658,12 @@ public void getTopactivitySinPermisos(){
         cdt.cancel();
         Log.i("INFO", "Timer cancelled");
         super.onDestroy();
+
+
+        //para evitar que el user pueda para el proceso:
+        //http://stackoverflow.com/questions/21550204/how-to-automatically-restart-a-service-even-if-user-force-close-it
+
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
     }
 
 
