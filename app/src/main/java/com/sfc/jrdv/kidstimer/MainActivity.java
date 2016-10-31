@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Intent intent =new Intent(this,ejemploService.class);
         Intent intent =new Intent(this,LockService.class);
-        intent.putExtra(ejemploService.EXTRA_MESSAGE,"texto 2 a pasar");
+        intent.putExtra(LockService.EXTRA_MESSAGE,"texto 2 a pasar");
+        intent.putExtra(LockService.EXTRA_TIME,"0");//al arranacra no le damos mas tiempo pero hay que psar el intent
         startService(intent);
 
     }

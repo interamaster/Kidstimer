@@ -14,7 +14,7 @@ import android.util.Log;
 public class ejemploService extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    public static final String  EXTRA_MESSAGE="mensaje";
+    public static final String  EXTRA_MESSAGE2="mensaje";
 
     // TODO: Rename parameters
     public static final String EXTRA_PARAM1 = "com.sfc.jrdv.kidstimer.extra.PARAM1";
@@ -37,7 +37,7 @@ public class ejemploService extends IntentService {
                     e.printStackTrace();
                 }
 
-                String textRecibidoIntent=intent.getStringExtra(EXTRA_MESSAGE);
+                String textRecibidoIntent=intent.getStringExtra(EXTRA_MESSAGE2);
 
                 showText(textRecibidoIntent);
 

@@ -57,6 +57,10 @@ public class LockService extends Service {
     private static Timer timer = new Timer();
     private Context mContext;
 
+    //para el intnt Extra info
+
+    public static final String  EXTRA_MESSAGE="mensaje";
+    public static final String  EXTRA_TIME="time";
 
 
 
@@ -391,6 +395,17 @@ public class LockService extends Service {
         //SI YA ESTABA CREADO!!!
         //ASI QUE ES LA MEJO MANERA DE ACTUALIZAR LA INFO!!
 
+        //ej leer el extra del intent:
+
+        String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
+        Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
+
+        String intentExtraTime=intent.getStringExtra(EXTRA_TIME);
+
+
+        //sumamos ese tiempo extra: si se puede:
+
+        tiempoTotalParaJugar=tiempoTotalParaJugar+Integer.valueOf(intentExtraTime);
 
         scheduleMethod();
 
@@ -474,20 +489,13 @@ public class LockService extends Service {
 
             @Override
             public void run() {
-                // TODO Auto-generated method stub
 
-                // This method will check for the Running apps after every 100ms
-               // if(30 minutes spent){
+                //checkRunningApps2();
+                // retriveNewApp();
+                //gettopactivity();//con este hacen falta permisos
+                getTopactivitySinPermisos();
+                //newgettopactivity();//ESTE TAMBIEN FUNCIONA EN LL
 
-                 if(12<10){
-                    stop();
-                }else{
-                    //checkRunningApps2();
-                    // retriveNewApp();
-                     //gettopactivity();//con este hacen falta permisos
-                      getTopactivitySinPermisos();
-                     //newgettopactivity();//ESTE TAMBIEN FUNCIONA EN LL
-                }
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
@@ -631,7 +639,7 @@ public void getTopactivitySinPermisos(){
 
 
         // Provide the packagename(s) of apps here, you want to show password activity
-        if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) && tiempoTotalParaJugar>=3520000) {
+        if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) && tiempoTotalParaJugar>=3520000) {//TODO PONER TIEMPO A >=1000
 
           //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
