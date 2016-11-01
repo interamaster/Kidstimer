@@ -19,7 +19,7 @@ public class BlockedActivity extends AppCompatActivity {
 
         Intent intent =new Intent(this,LockService.class);
         intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 15 min mas 15*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
-        intent.putExtra(LockService.EXTRA_TIME,"900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+        intent.putExtra(LockService.EXTRA_TIME,"9000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
         startService(intent);
 
 

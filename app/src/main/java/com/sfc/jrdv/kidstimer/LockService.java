@@ -150,6 +150,102 @@ public class LockService extends Service {
         */
     }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////METODO QUE SE EJECUTA CADA VEZ QUE SE RELANZA ESTE SERVICE//////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // TODO OJO ESTE METODO SE EJECUTA CADA VEZ QUE SE LANZA UN INTENT DE ESTE SERVICE
+        //SI YA ESTABA CREADO!!!
+        //ASI QUE ES LA MEJO MANERA DE ACTUALIZAR LA INFO!!
+
+        //ej leer el extra del intent:
+
+        String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
+        Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
+
+        String intentExtraTime=intent.getStringExtra(EXTRA_TIME);
+
+
+        //sumamos ese tiempo extra: si se puede:
+
+        tiempoTotalParaJugar=tiempoTotalParaJugar+Integer.valueOf(intentExtraTime);
+
+        scheduleMethod();
+
+        CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
+        // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
+
+        instance = this;
+
+
+        if(intent!=null) {
+
+
+            boolean screenOn = intent.getBooleanExtra("screen_state", false);
+            if (!screenOn) {
+                // YOUR CODE
+                Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
+
+                //reiniciamos el timercountdown
+                //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
+
+                Log.i("INFO", "Restarting  timer...");
+
+                //si existe timer lo paramos
+                if (cdt != null) {
+                    cdt.cancel();
+                }
+
+                //reakustamos el timer al encender pantalla
+
+                TimerTiempoJuegoIniciarOajustar();
+
+
+            /*
+            //lo hacemos emjor llmando al metodo creado
+            cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                    Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
+                    //update tiempoTotalParaJugar with the remaining time left
+                    tiempoTotalParaJugar = millisUntilFinished;
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    //  se acabo la tablet!!
+                    Log.i("INFO", "Timer finished");
+                }
+            };
+
+
+
+            cdt.start();
+
+            */
+
+            } else {
+                // YOUR CODE
+                Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+
+                cdt.cancel();
+            }
+
+        }
+
+        return START_STICKY;
+    }
+
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////TIEMPO DE JUEGO TIMER//////////////////////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,29 +339,27 @@ public class LockService extends Service {
  private void startTimerNewDay() {
 
 
+
      // Schedule to run every day in midnight
 
-    // today
-     Calendar date = new GregorianCalendar();
-     date.setTime(new Date());
+     // Scheduling task at today : 00:00:00 PM
+     Calendar calendar = Calendar.getInstance();
+     calendar.set(Calendar.HOUR_OF_DAY, 23);
+     calendar.set(Calendar.MINUTE, 59);
+     calendar.set(Calendar.SECOND, 59);
+     Date time = calendar.getTime();
 
-     date.set(Calendar.HOUR_OF_DAY, 00);
-     date.set(Calendar.MINUTE, 00);
-     date.set(Calendar.SECOND, 0);
-     date.set(Calendar.MILLISECOND, 0);
-
-
+    // Read more at http://www.java2blog.com/2015/08/java-timer-example.html
 
        //  int period = 10000;//10secs
         int perioddia= 1000 * 60 * 60 * 24 * 7;//24h
 
-         timer.schedule(new mainTask(), date.getTime(), perioddia );
-     //TODO PX EL TIMER SE EJECUTA AL CREARLO  TAMBIEN?¿?
 
+     timer.schedule(new mainTask() ,time,perioddia);
 
+     //To DO PX EL TIMER SE EJECUTA AL CREARLO  TAMBIEN?¿?
+     //solucion no poner ls 00.00.00
 
-        //original se repite cada 15 segs:
-       // timer.scheduleAtFixedRate(new mainTask(), 0, 15000);//pruebo con 50 segs
     }
 
  private class mainTask extends TimerTask
@@ -390,100 +484,6 @@ public class LockService extends Service {
         return null;
     }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////METODO QUE SE EJECUTA CADA VEZ QUE SE RELANZA ESTE SERVICE//////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO OJO ESTE METODO SE EJECUTA CADA VEZ QUE SE LANZA UN INTENT DE ESTE SERVICE
-        //SI YA ESTABA CREADO!!!
-        //ASI QUE ES LA MEJO MANERA DE ACTUALIZAR LA INFO!!
-
-        //ej leer el extra del intent:
-
-        String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
-        Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
-
-        String intentExtraTime=intent.getStringExtra(EXTRA_TIME);
-
-
-        //sumamos ese tiempo extra: si se puede:
-
-        tiempoTotalParaJugar=tiempoTotalParaJugar+Integer.valueOf(intentExtraTime);
-
-        scheduleMethod();
-
-        CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
-       // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
-
-        instance = this;
-
-
-        if(intent!=null) {
-
-
-            boolean screenOn = intent.getBooleanExtra("screen_state", false);
-            if (!screenOn) {
-                // YOUR CODE
-                Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
-
-                //reiniciamos el timercountdown
-                //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
-
-                Log.i("INFO", "Restarting  timer...");
-
-                //si existe timer lo paramos
-                if (cdt != null) {
-                    cdt.cancel();
-                }
-
-                //reakustamos el timer al encender pantalla
-
-                TimerTiempoJuegoIniciarOajustar();
-
-
-            /*
-            //lo hacemos emjor llmando al metodo creado
-            cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                    Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
-                    //update tiempoTotalParaJugar with the remaining time left
-                    tiempoTotalParaJugar = millisUntilFinished;
-
-                }
-
-                @Override
-                public void onFinish() {
-
-                    //  se acabo la tablet!!
-                    Log.i("INFO", "Timer finished");
-                }
-            };
-
-
-
-            cdt.start();
-
-            */
-
-            } else {
-                // YOUR CODE
-                Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
-
-                cdt.cancel();
-            }
-
-        }
-
-        return START_STICKY;
-    }
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -587,6 +587,13 @@ public void newgettopactivity(){
 
 public void getTopactivitySinPermisos(){
 
+
+    //ACTUALIZAMOS LA NOTIFICACION
+
+    refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
+
+
+
         ActivityManager activityManager = (ActivityManager) getSystemService (Context.ACTIVITY_SERVICE);
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
@@ -667,9 +674,7 @@ public void getTopactivitySinPermisos(){
         }
 
 
-        //ACTUALIZAMOS LA NOTIFICACION
 
-    refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
 
 
     }
