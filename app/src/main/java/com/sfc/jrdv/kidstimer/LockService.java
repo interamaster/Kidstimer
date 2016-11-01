@@ -44,7 +44,7 @@ public class LockService extends Service {
 
     //String CURRENT_PACKAGE_NAME = {your this app packagename};
     private String CURRENT_PACKAGE_NAME ="com.sfc.jrdv.kidstimer";
-    private String PACKAGEMALDITO1="com.google.android.gms";//el home screen de LL
+    private String PACKAGEMALDITO1="com.android.launcher";//el home screen de LL
     private String lastAppPN = "";
     boolean noDelay = false;
     public static LockService instance;
@@ -99,6 +99,13 @@ public class LockService extends Service {
         CalcularNewDayTime4Play();
 
                 // una vez sabida la cantidad creamos el timer!!
+
+
+        //no lo podemois hacer en una funcion aparate porque da crash!!
+        //pero se modifico la funcion y ya si!!!
+        TimerTiempoJuegoIniciarOajustar();
+
+
                 //no lo podemois hacer en una funcion aparate porque da crash!!
 /*
 //ESTE TIMER SE EJECUTA PERO SE BORRA DE INMEDIATO CON EL DEL ONSTARTCOMMAND, ASI QUE LO QUITO
@@ -165,17 +172,10 @@ public class LockService extends Service {
 
         //ej leer el extra del intent:
 
-        String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
-        Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
-
-        String intentExtraTime=intent.getStringExtra(EXTRA_TIME);
 
 
-        //sumamos ese tiempo extra: si se puede:
 
-        tiempoTotalParaJugar=tiempoTotalParaJugar+Integer.valueOf(intentExtraTime);
 
-        scheduleMethod();
 
         CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
         // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
@@ -185,6 +185,27 @@ public class LockService extends Service {
 
         if(intent!=null) {
 
+
+
+            //1º)sacamos los valores de EXTRA_TIME y EXTRA_MSG
+
+            String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
+            Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
+
+            String intentExtraTime = intent.getStringExtra(EXTRA_TIME);
+
+
+                //sumamos ese tiempo extra: si se puede:
+
+                if (intentExtraTime != null) {
+
+                    tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
+                }
+
+
+
+
+            //2º)chequeamos si es un intent de pantalla
 
             boolean screenOn = intent.getBooleanExtra("screen_state", false);
             if (!screenOn) {
@@ -236,10 +257,18 @@ public class LockService extends Service {
                 // YOUR CODE
                 Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
-                cdt.cancel();
+                //si existe timer lo paramos
+                if (cdt != null) {
+                    cdt.cancel();
+                }
             }
 
         }
+
+
+        //inicamos la repeticion
+        scheduleMethod();
+
 
         return START_STICKY;
     }
