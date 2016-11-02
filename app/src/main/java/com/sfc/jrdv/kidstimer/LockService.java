@@ -270,7 +270,7 @@ public class LockService extends Service {
         scheduleMethod();
 
 
-        return START_STICKY;
+        return Service.START_STICKY;
     }
 
 
@@ -689,17 +689,15 @@ public void getTopactivitySinPermisos(){
         } else {
             // DO nothing
           //TODO quitar para ver logging : Log.v("INFO  sE BLOQUEARIA: ",  lastAppPN);
-            /*
+
             //TODO bloquear
-            Intent BlockedActivityIntent = new Intent(this, BlockedActivity.class);
 
 
-            startActivity(BlockedActivityIntent);
-            */
-
+            /*
             Intent lockIntent = new Intent(mContext, BlockedActivity.class);
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(lockIntent);
+            */
         }
 
 
