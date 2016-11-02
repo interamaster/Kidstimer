@@ -39,6 +39,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static android.R.attr.y;
+
 
 public class LockService extends Service {
 
@@ -94,9 +96,29 @@ public class LockService extends Service {
         Log.i("INFO", "Starting TIEMPO DE JUEGO TIMER  on create...");
         //en oncreate iniciamos el timer con el timepo predefinido:
 
+
+
+        //1º)chequeamos si tenemos al valor restante guaradai(si ha intentado forzar el apagado)
+
+
+        long tiempoRstanteenPREF = Myapplication.preferences.getLong(Myapplication.PREF_TiempoRestante,0);//por defecto vale 0
+
+
+        if(tiempoRstanteenPREF>=1){
+
+            //ya habiamos guardao el tiempo..lo recuperamos
+
+            tiempoTotalParaJugar=tiempoRstanteenPREF;
+
+        }
+        else {
+
+
         //lo hacemos desde la funcion que calcula que dia es y segun el dia le da un tiempo:
 
         CalcularNewDayTime4Play();
+
+        }
 
                 // una vez sabida la cantidad creamos el timer!!
 
@@ -104,6 +126,12 @@ public class LockService extends Service {
         //no lo podemois hacer en una funcion aparate porque da crash!!
         //pero se modifico la funcion y ya si!!!
         TimerTiempoJuegoIniciarOajustar();
+
+
+
+        //iniciamos una notifiacion nada mas arranacar
+
+        refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
 
 
                 //no lo podemois hacer en una funcion aparate porque da crash!!
@@ -619,8 +647,15 @@ public void getTopactivitySinPermisos(){
 
     //ACTUALIZAMOS LA NOTIFICACION
 
-    refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
 
+    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(tiempoTotalParaJugar),
+            TimeUnit.MILLISECONDS.toMinutes(tiempoTotalParaJugar) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar) % TimeUnit.MINUTES.toSeconds(1));
+
+  //  refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
+
+
+    refreshNotifications("TE QUEDAN: " + hms);
 
 
         ActivityManager activityManager = (ActivityManager) getSystemService (Context.ACTIVITY_SERVICE);
@@ -748,9 +783,10 @@ public void getTopactivitySinPermisos(){
             mBuilder.setOnlyAlertOnce(true);
             mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
             mBuilder.setSmallIcon(R.drawable.timer_icono);
+
             mBuilder.setOngoing(true);
            // mBuilder.setContentTitle(mContext.getString(R.string.downloading_file));
-            mBuilder.setContentTitle("titulo");
+           // mBuilder.setContentTitle("titulo");
         }
         // Sets an ID for the notification, so it can be updated
         int notifyID = 1;
@@ -769,5 +805,23 @@ public void getTopactivitySinPermisos(){
     }
 
 
+
+
+    public void onTaskRemoved(Intent rootIntent) {
+
+        //unregister listeners
+        //do any other cleanup if required
+
+        //stop service
+        //stopSelf();
+
+        //guardamos el timepo restante
+
+        Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
+
+
+
+        Log.v("INFO  ",  "proceso parado y tiempo guardado!!!");
+    }
 
 }
