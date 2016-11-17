@@ -11,6 +11,8 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     //para el device manager
@@ -113,6 +115,14 @@ public class MainActivity extends AppCompatActivity {
                 // cancle it.
             }
         }
+    }
+
+    public void loggingCheck(View view) {
+
+        //Intent intent =new Intent(this,ejemploService.class);
+        Intent intent =new Intent(this,LoginPadActivity.class);
+        startActivity(intent);
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,7 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".Myapplication"
@@ -64,6 +65,15 @@
             android:exported="true" />
 
         <activity android:name=".BlockedActivity"></activity>
+
+        //loginActivity
+
+        <activity
+            android:name=".teclado.LoginPadActivity"
+            android:theme="@style/Theme.Transparent"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>

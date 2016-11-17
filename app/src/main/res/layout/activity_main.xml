@@ -8,11 +8,21 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.sfc.jrdv.kidstimer.MainActivity">
+    tools:context="com.sfc.jrdv.kidstimer.MainActivity"
+    android:background="@drawable/fondo2">
 
     <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="empieza el service!"
+    android:onClick="startService"
+    android:id="@+id/buton1"/>
+
+    <Button
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="empieza el service!"
-        android:onClick="startService"/>
+        android:text="loggingcheck"
+        android:onClick="loggingCheck"/>
 </RelativeLayout>

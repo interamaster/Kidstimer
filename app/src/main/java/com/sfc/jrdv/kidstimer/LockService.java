@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.jaredrummler.android.processes.AndroidProcesses;
 import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
+import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -490,7 +491,9 @@ public class LockService extends Service {
 
         case Calendar.THURSDAY:
             //entre semana 1 HORA
-            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+           // tiempoTotalParaJugar = 1*60 * 60 * 1000;
+
+            tiempoTotalParaJugar = 20* 1000;
 
 
             break;
@@ -717,7 +720,7 @@ public void getTopactivitySinPermisos(){
 
 
         // Provide the packagename(s) of apps here, you want to show password activity
-        if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) && tiempoTotalParaJugar>=3520000) {//TODO PONER TIEMPO A >=1000
+        if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) || tiempoTotalParaJugar>=2000) {//TODO PONER TIEMPO A >=1000
 
           //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
@@ -725,14 +728,16 @@ public void getTopactivitySinPermisos(){
             // DO nothing
           //TODO quitar para ver logging : Log.v("INFO  sE BLOQUEARIA: ",  lastAppPN);
 
+
+
             //TODO bloquear
 
 
-            /*
-            Intent lockIntent = new Intent(mContext, BlockedActivity.class);
+
+            Intent lockIntent = new Intent(mContext, LoginPadActivity.class);
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(lockIntent);
-            */
+
         }
 
 
