@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+       // setContentView(R.layout.activity_main);//TODO de omeonto nova cargar ninguna layout
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////device manager//////////////////////////////////////////////////////
@@ -55,13 +55,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
+        //empezamos el service del tiron:
+
+        Intent intent =new Intent(this,LockService.class);
+        intent.putExtra(LockService.EXTRA_MESSAGE,"texto 2 a pasar");
+        intent.putExtra(LockService.EXTRA_TIME,"0");//al arranacra no le damos mas tiempo pero hay que psar el intent
+        startService(intent);
+
+        finish();
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////device manager//////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        usageAccessSettingsPage();
+        //usageAccessSettingsPage();//TODO esto no recuerdo porque lo puse..de omeonto lo quito
     }
-
+/*
     public void usageAccessSettingsPage(){
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS);
@@ -84,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    */
 
     public void startService(View view) {
 

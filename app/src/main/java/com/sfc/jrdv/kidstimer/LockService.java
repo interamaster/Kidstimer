@@ -491,9 +491,9 @@ public class LockService extends Service {
 
         case Calendar.THURSDAY:
             //entre semana 1 HORA
-           // tiempoTotalParaJugar = 1*60 * 60 * 1000;
+          tiempoTotalParaJugar = 1*60 * 60 * 1000;
 
-            tiempoTotalParaJugar = 20* 1000;
+           // tiempoTotalParaJugar = 20* 1000;
 
 
             break;
