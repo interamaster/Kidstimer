@@ -20,13 +20,12 @@ import android.widget.TextView;
 
 import com.cardinalsolutions.android.arch.autowire.AndroidLayout;
 import com.cardinalsolutions.android.arch.autowire.AndroidView;
-
 import com.sfc.jrdv.kidstimer.LockService;
 import com.sfc.jrdv.kidstimer.R;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Random;
 
 
 
@@ -203,6 +202,124 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         Log.d("INFO","el numero secreto YA INVERTIDO  es: "+numeroClaveFinal);
 
         USER_PIN_MAX_CHAR=4;
+
+        //vasmoa a acompañarlo del nombre
+
+
+        String NombreNino="GUSTAVO";//TODO RECUPERAR DE PREF EL NOMBRE PARA CODIFICAR
+        NombreNino.equalsIgnoreCase(NombreNino);
+
+
+        byte[] bytes = new byte[0];
+        try {
+            bytes = NombreNino.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        //Log.d("INFO","el nombreniño y eEN ARRAY DE BYTES: "+ Arrays.toString(bytes));
+        try {
+              NombreNino = new String(bytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+      //  Log.d("INFO","el nombre niño  YA INVERTIDO  y recueprado  ARRAY DE BYTES: "+ NombreNino );
+
+        /*
+        D/INFO: el nombreniño y eEN ARRAY DE BYTES: [71, 85, 83, 84, 65, 86, 79]
+        D/INFO: el nombre niño  YA INVERTIDO  y recueprado  ARRAY DE BYTES: GUSTAVO
+         */
+
+        // lo vamos a sumar el array:
+
+        int sumanombreniuno = 0;
+
+        for (int i : bytes)
+            sumanombreniuno += i;
+
+       // Log.d("INFO","la suma es "+ sumanombreniuno );//la suma es 553
+
+
+        //1º) le restamos al numero invertido 1000 si se puede si no se deja (minimo sera las 01:00-->10)
+        int numeroCalveFinalenInt=Integer.parseInt(numeroClaveFinal);
+
+        if (numeroCalveFinalenInt>1000) {
+            numeroCalveFinalenInt=numeroCalveFinalenInt-1000;
+
+
+
+        }
+
+
+            //le sumamos el valor del nombre:
+        numeroCalveFinalenInt=numeroCalveFinalenInt+sumanombreniuno;
+
+        //lo convertimos en string
+
+        numeroClaveFinal=String.valueOf(numeroCalveFinalenInt);
+
+
+        Log.d("INFO","el numero secreto YA INVERTIDO  Y codificado con la suma es: "+numeroClaveFinal);
+
+        //probamos a recuperarlo
+
+        decodenumfinalString(numeroClaveFinal);
+
+
+
+    }
+
+    private void decodenumfinalString(String numeroClaveFinal) {
+
+
+        String numeroClaveCheck=String.format("%02d", Horas)+String.format("%02d", minutes);
+       // Log.d("INFO DECODE","el tiempo secreto sin invertir es: "+numeroClaveCheck);
+
+        numeroClaveCheck=new StringBuilder(numeroClaveCheck).reverse().toString();
+       // Log.d("INFO DECODE","el tiempo secreto YA INVERTIDO  es: "+numeroClaveCheck);
+
+       int numeroasint=Integer.parseInt(numeroClaveCheck);
+        if (numeroasint>1000){
+
+            numeroasint=numeroasint-1000;
+        }
+
+        //aqui ya tenemos el timepo correcto
+
+        //le sumamos el nombre del niño
+
+
+        String NombreNino="GUSTAVO";
+        NombreNino.equalsIgnoreCase(NombreNino);
+
+        byte[] bytes = new byte[0];
+        try {
+            bytes = NombreNino.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        // lo vamos a sumar el array:
+
+        int sumanombreniuno = 0;
+
+        for (int i : bytes)
+            sumanombreniuno += i;
+
+        numeroasint=numeroasint+sumanombreniuno;
+        String NumeroFinalDecode=String.valueOf(numeroasint);
+
+
+        //y ahora lo chequeamos
+
+        if (NumeroFinalDecode.equals(numeroClaveFinal)){
+
+            Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ numeroClaveFinal );
+
+        }
+
+
 
     }
 
