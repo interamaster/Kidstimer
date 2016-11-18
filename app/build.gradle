@@ -30,4 +30,7 @@ dependencies {
 
     //para el teclado
     compile files('libs/androidautowire.jar')
+    //para redeondear imagen
+
+    compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 }

@@ -21,13 +21,12 @@ import android.widget.TextView;
 import com.cardinalsolutions.android.arch.autowire.AndroidLayout;
 import com.cardinalsolutions.android.arch.autowire.AndroidView;
 import com.sfc.jrdv.kidstimer.LockService;
+import com.sfc.jrdv.kidstimer.Myapplication;
 import com.sfc.jrdv.kidstimer.R;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Locale;
-
-
 
 
 @AndroidLayout(com.sfc.jrdv.kidstimer.R.layout.activity_login_pad)
@@ -105,6 +104,9 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     private TextToSpeech textToSpeech;
 
 
+    //textview multitplicacvion
+
+    private TextView MultiplicacionTextview ;
 
 
     @Override
@@ -125,7 +127,14 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
                generaCodigoSecretosegunHora();
 
+        //textview multitplicacvion
+        MultiplicacionTextview =(TextView)findViewById(R.id.preguntaMultiplicacion);
 
+
+        String ninoname = Myapplication.preferences.getString(Myapplication.PREF_NOmbre_Nino,"NO");
+
+
+        MultiplicacionTextview.setText("ENTER CODE "+ninoname);
 
 }
 
@@ -244,7 +253,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         //1º) le restamos al numero invertido 1000 si se puede si no se deja (minimo sera las 01:00-->10)
         int numeroCalveFinalenInt=Integer.parseInt(numeroClaveFinal);
 
-        if (numeroCalveFinalenInt>1000) {
+        if (numeroCalveFinalenInt>2000) {
             numeroCalveFinalenInt=numeroCalveFinalenInt-1000;
 
 
@@ -280,7 +289,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
        // Log.d("INFO DECODE","el tiempo secreto YA INVERTIDO  es: "+numeroClaveCheck);
 
        int numeroasint=Integer.parseInt(numeroClaveCheck);
-        if (numeroasint>1000){
+        if (numeroasint>2000){
 
             numeroasint=numeroasint-1000;
         }
