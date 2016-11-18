@@ -97,7 +97,10 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     private int Horas;
     private int minutes;
     private int numeroFallos =0;
-    private String numeroClaveFinal;
+    private String numeroClaveFinal15min;
+    private String numeroClaveFinal30min;
+    private String numeroClaveFinal1HORA;
+    private String numeroClaveFinal3HORAS;
 
     //para hablar
 
@@ -199,23 +202,59 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 	private void generaCodigoSecretosegunHora(){
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////30 MIN,1 HORA y 3 HORAS//////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //VAMOS A AHCERLO MEJOR CON UNA FUNCION:
+
+        numeroClaveFinal15min=generaNumeroClave("15min");
+
+        Log.d("INFO","el numero secreto para 15 min "+ numeroClaveFinal15min);
+
+
+        numeroClaveFinal30min=generaNumeroClave("30min");
+
+         Log.d("INFO","el numero secreto para 30 min "+ numeroClaveFinal30min);
+
+        numeroClaveFinal1HORA=generaNumeroClave("1HORA");
+        Log.d("INFO","el numero secreto para 1 HORA "+ numeroClaveFinal1HORA);
+
+        numeroClaveFinal3HORAS=generaNumeroClave("3HORAS");
+        Log.d("INFO","el numero secreto para 3 HORAS "+ numeroClaveFinal3HORAS);
+
+
+
+
+    }
+
+
+
+    private String generaNumeroClave(String tiempo){
+
 
         Calendar c = Calendar.getInstance();
-         Horas = c.get(Calendar.HOUR_OF_DAY);//formato 24h
-         minutes=c.get(Calendar.MINUTE);
+        Horas = c.get(Calendar.HOUR_OF_DAY);//formato 24h
+        minutes=c.get(Calendar.MINUTE);
 
-        numeroClaveFinal=String.format("%02d", Horas)+String.format("%02d", minutes);
-        Log.d("INFO","el numero secreto sin invertir es: "+numeroClaveFinal);
+        String clave =String.format("%02d", Horas)+String.format("%02d", minutes);
+        Log.d("INFO","el numero secreto sin invertir es: "+ clave);
 
-        numeroClaveFinal=new StringBuilder(numeroClaveFinal).reverse().toString();
-        Log.d("INFO","el numero secreto YA INVERTIDO  es: "+numeroClaveFinal);
+        clave =new StringBuilder(clave).reverse().toString();
+        Log.d("INFO","el numero secreto YA INVERTIDO  es: "+ clave);
 
-        USER_PIN_MAX_CHAR=4;
+
 
         //vasmoa a acompañarlo del nombre
 
 
-        String NombreNino="GUSTAVO";//TODO RECUPERAR DE PREF EL NOMBRE PARA CODIFICAR
+
+        String NombreNino = Myapplication.preferences.getString(Myapplication.PREF_NOmbre_Nino,"NO");
+
+        //y del tiempo:
+
+        NombreNino=NombreNino+tiempo;
+
         NombreNino.equalsIgnoreCase(NombreNino);
 
 
@@ -226,32 +265,25 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
             e.printStackTrace();
         }
 
-        //Log.d("INFO","el nombreniño y eEN ARRAY DE BYTES: "+ Arrays.toString(bytes));
+
         try {
-              NombreNino = new String(bytes, "UTF-8");
+            NombreNino = new String(bytes, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-      //  Log.d("INFO","el nombre niño  YA INVERTIDO  y recueprado  ARRAY DE BYTES: "+ NombreNino );
 
-        /*
-        D/INFO: el nombreniño y eEN ARRAY DE BYTES: [71, 85, 83, 84, 65, 86, 79]
-        D/INFO: el nombre niño  YA INVERTIDO  y recueprado  ARRAY DE BYTES: GUSTAVO
-         */
-
-        // lo vamos a sumar el array:
 
         int sumanombreniuno = 0;
 
         for (int i : bytes)
             sumanombreniuno += i;
 
-       // Log.d("INFO","la suma es "+ sumanombreniuno );//la suma es 553
+
 
 
         //1º) le restamos al numero invertido 1000 si se puede si no se deja (minimo sera las 01:00-->10)
-        int numeroCalveFinalenInt=Integer.parseInt(numeroClaveFinal);
+        int numeroCalveFinalenInt=Integer.parseInt(clave);
 
         if (numeroCalveFinalenInt>2000) {
             numeroCalveFinalenInt=numeroCalveFinalenInt-1000;
@@ -261,34 +293,36 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         }
 
 
-            //le sumamos el valor del nombre:
+        //le sumamos el valor del nombre:
         numeroCalveFinalenInt=numeroCalveFinalenInt+sumanombreniuno;
 
         //lo convertimos en string
 
-        numeroClaveFinal=String.valueOf(numeroCalveFinalenInt);
+        clave =String.valueOf(numeroCalveFinalenInt);
 
 
-        Log.d("INFO","el numero secreto YA INVERTIDO  Y codificado con la suma es: "+numeroClaveFinal);
+        Log.d("INFO","el numero secreto YA INVERTIDO  Y codificado con la suma es: "+ clave);
 
         //probamos a recuperarlo
 
-        decodenumfinalString(numeroClaveFinal);
+        decodenumfinalcontiempo(clave,tiempo);//TODO quitar ya sabemos que funciona ok
 
+        //lo devolvemos
+
+        return clave;
 
 
     }
 
-    private void decodenumfinalString(String numeroClaveFinal) {
-
+    private void decodenumfinalcontiempo(String clave,String timepo) {
 
         String numeroClaveCheck=String.format("%02d", Horas)+String.format("%02d", minutes);
-       // Log.d("INFO DECODE","el tiempo secreto sin invertir es: "+numeroClaveCheck);
+        // Log.d("INFO DECODE","el tiempo secreto sin invertir es: "+numeroClaveCheck);
 
         numeroClaveCheck=new StringBuilder(numeroClaveCheck).reverse().toString();
-       // Log.d("INFO DECODE","el tiempo secreto YA INVERTIDO  es: "+numeroClaveCheck);
+        // Log.d("INFO DECODE","el tiempo secreto YA INVERTIDO  es: "+numeroClaveCheck);
 
-       int numeroasint=Integer.parseInt(numeroClaveCheck);
+        int numeroasint=Integer.parseInt(numeroClaveCheck);
         if (numeroasint>2000){
 
             numeroasint=numeroasint-1000;
@@ -299,7 +333,13 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         //le sumamos el nombre del niño
 
 
-        String NombreNino="GUSTAVO";
+
+        String NombreNino = Myapplication.preferences.getString(Myapplication.PREF_NOmbre_Nino,"NO");
+
+        //y el timepo
+
+        NombreNino=NombreNino+timepo;
+
         NombreNino.equalsIgnoreCase(NombreNino);
 
         byte[] bytes = new byte[0];
@@ -322,15 +362,16 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //y ahora lo chequeamos
 
-        if (NumeroFinalDecode.equals(numeroClaveFinal)){
+        if (NumeroFinalDecode.equals(clave)){
 
-            Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ numeroClaveFinal );
+            Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ clave );
 
         }
 
 
-
     }
+
+
 
     private void configureViews() {
       //  this.mLoginProgress.setVisibility(View.GONE);
@@ -379,17 +420,38 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 
 
-                    if (numerometido.equals(numeroClaveFinal))//TODO calcular numeo correcto
+                    if (numerometido.equals(numeroClaveFinal30min))//TODO calcular numeo correcto
                     {
 
                         //hemos acertado siguiente:
-                        ChequeaResultado("OK");
+                        ChequeaResultado("30min");
                     }
 
                     else if (numerometido.equals("0408") || numerometido.equals("1972"))  {
                         //numero especial fijo da 1 hora mas
 
                         ChequeaResultado("ESPECIAL");
+
+                    }
+                    else if (numerometido.equals(numeroClaveFinal15min))  {
+                        //numero especial fijo da 1 hora mas
+
+                        ChequeaResultado("15min");
+
+                    }
+
+
+                    else if (numerometido.equals(numeroClaveFinal1HORA))  {
+                        //numero especial fijo da 1 hora mas
+
+                        ChequeaResultado("1HORA");
+
+                    }
+
+                    else if (numerometido.equals(numeroClaveFinal3HORAS))  {
+                        //numero especial fijo da 1 hora mas
+
+                        ChequeaResultado("3HORAS");
 
                     }
                     else{
@@ -453,7 +515,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 
 
-        } else  if (chequeanum.equals("OK")){
+        }
+        else  if (chequeanum.equals("15min")){
             ////si hemos acertado:
 
             //this.mLoginProgress.setVisibility(View.GONE);
@@ -462,20 +525,84 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 
 
-            //TODO genera 15 min extras
+
 
             //reiniicmaos el intet service psasndole un valor nuevo
 
             Intent intent =new Intent(this,LockService.class);
             intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 15 min mas 15*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
-            intent.putExtra(LockService.EXTRA_TIME,"1800000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+            intent.putExtra(LockService.EXTRA_TIME,"900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
             startService(intent);
 
 
             finish();
         }
 
-        else if(chequeanum.equals("ESPECIAL")){
+
+            else  if (chequeanum.equals("30min")){
+            ////si hemos acertado:
+
+            //this.mLoginProgress.setVisibility(View.GONE);
+            // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
+            Log.e("INFO", "acertaste!!!!!");
+
+
+
+
+
+            //reiniicmaos el intet service psasndole un valor nuevo
+
+            Intent intent =new Intent(this,LockService.class);
+            intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 30 min mas 30*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+            intent.putExtra(LockService.EXTRA_TIME,"1800000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+            startService(intent);
+
+
+            finish();
+        }
+            else  if (chequeanum.equals("1HORA")){
+        ////si hemos acertado:
+
+        //this.mLoginProgress.setVisibility(View.GONE);
+        // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
+        Log.e("INFO", "acertaste!!!!!");
+
+
+
+
+        //reiniicmaos el intet service psasndole un valor nuevo
+
+        Intent intent =new Intent(this,LockService.class);
+        intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 1 HORA mas 60*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+        intent.putExtra(LockService.EXTRA_TIME,"3600000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+        startService(intent);
+
+
+        finish();
+    }
+
+  else  if (chequeanum.equals("3HORAS")){
+        ////si hemos acertado:
+
+        //this.mLoginProgress.setVisibility(View.GONE);
+        // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
+        Log.e("INFO", "acertaste!!!!!");
+
+
+
+        //reiniicmaos el intet service psasndole un valor nuevo
+
+        Intent intent =new Intent(this,LockService.class);
+        intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 3 HORAS mas 30*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+        intent.putExtra(LockService.EXTRA_TIME,"10800000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+        startService(intent);
+
+
+        finish();
+    }
+
+
+    else if(chequeanum.equals("ESPECIAL")){
 
             Log.e("INFO", "acertaste ESPECIAL!!!!!");
 
@@ -486,7 +613,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
             //reiniicmaos el intet service psasndole un valor nuevo
 
             Intent intent =new Intent(this,LockService.class);
-            intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 15 min mas 15*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+            intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 1 hora   mas 60*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
             intent.putExtra(LockService.EXTRA_TIME,"3600000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
             startService(intent);
 

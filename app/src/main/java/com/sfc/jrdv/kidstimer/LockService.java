@@ -109,7 +109,8 @@ public class LockService extends Service {
 
             //ya habiamos guardao el tiempo..lo recuperamos
 
-            tiempoTotalParaJugar=tiempoRstanteenPREF;
+            //TODO quitar eso solo para probar timnepos      :  tiempoTotalParaJugar=tiempoRstanteenPREF;
+            tiempoTotalParaJugar=10000;
 
         }
         else {
@@ -500,7 +501,7 @@ public class LockService extends Service {
 
         case Calendar.FRIDAY:
             //entre semana 1 HORA
-           // tiempoTotalParaJugar = 1*60 * 60 * 1000;
+          // tiempoTotalParaJugar = 1*60 * 60 * 1000;
 
 
              tiempoTotalParaJugar = 10* 1000;
@@ -716,9 +717,15 @@ public void getTopactivitySinPermisos(){
         if (!(lastAppPN.equals(packageName))) {
             lastAppPN = packageName;
             Log.v("INFO currentapp on get ", packageName);
+
+
         }
 
 
+
+              //guardamos el timepo restante
+
+         Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
 
         // Provide the packagename(s) of apps here, you want to show password activity
         if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) || tiempoTotalParaJugar>=2000) {//TODO PONER TIEMPO A >=1000
