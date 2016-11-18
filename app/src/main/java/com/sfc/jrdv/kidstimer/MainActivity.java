@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Boolean ninoyaelegido = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_NINOYAOK,false);//por defecto vale 0){
-        Log.d("INFO","niñoa ya elegido: "+ninoyaelegido);
+      //  Log.d("INFO","niñoa ya elegido: "+ninoyaelegido);
 
 
         //1º)si ya se eligio empieza del tiron
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
             String ninoname = Myapplication.preferences.getString(Myapplication.PREF_NOmbre_Nino,"NO");
 
-            Log.d("INFO","su nombre es "+ninoname);
+         //   Log.d("INFO","su nombre es "+ninoname);
 
             StartServiceYa();
 

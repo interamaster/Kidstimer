@@ -94,7 +94,7 @@ public class LockService extends Service {
 
 
 
-        Log.i("INFO", "Starting TIEMPO DE JUEGO TIMER  on create...");
+       // Log.i("INFO", "Starting TIEMPO DE JUEGO TIMER  on create...");
         //en oncreate iniciamos el timer con el timepo predefinido:
 
 
@@ -220,7 +220,7 @@ public class LockService extends Service {
             //1º)sacamos los valores de EXTRA_TIME y EXTRA_MSG
 
             String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
-            Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
+          //  Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
 
             String intentExtraTime = intent.getStringExtra(EXTRA_TIME);
 
@@ -240,12 +240,12 @@ public class LockService extends Service {
             boolean screenOn = intent.getBooleanExtra("screen_state", false);
             if (!screenOn) {
                 // YOUR CODE
-                Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
+               // Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
 
                 //reiniciamos el timercountdown
                 //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
 
-                Log.i("INFO", "Restarting  timer...");
+              //  Log.i("INFO", "Restarting  timer...");
 
                 //si existe timer lo paramos
                 if (cdt != null) {
@@ -285,7 +285,7 @@ public class LockService extends Service {
 
             } else {
                 // YOUR CODE
-                Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+              //  Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
                 //si existe timer lo paramos
                 if (cdt != null) {
@@ -367,7 +367,7 @@ public class LockService extends Service {
             @Override
             public void onTick(long millisUntilFinished) {
 
-                Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
+              //  Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
                 //update tiempoTotalParaJugar with the remaining time left
                 tiempoTotalParaJugar = millisUntilFinished;
                 // TODO ACTUALIZAR NOTIFICACION QUE ACTUALIZE EL TIMEPO RESTANTE Y QUE SE QUITE AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
@@ -378,7 +378,7 @@ public class LockService extends Service {
             public void onFinish() {
 
                 //TODO se acabo la tablet!!
-                Log.i("INFO", "Timer finished");
+              //  Log.i("INFO", "Timer finished");
             }
         };
 
@@ -427,7 +427,7 @@ public class LockService extends Service {
         public void run()
         {
             toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
-            Log.i("INFO", "ES UN NUEVO DIA!!!");
+           // Log.i("INFO", "ES UN NUEVO DIA!!!");
 
             //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
           CalcularNewDayTime4Play();
@@ -587,13 +587,13 @@ public void gettopactivity() {
             }
             if (mySortedMap != null && !mySortedMap.isEmpty()) {
                 String currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                Log.v("INFO currentapp: ", currentApp);
+                //Log.v("INFO currentapp: ", currentApp);
             }
         }
     } else {
         ActivityManager am = (ActivityManager) getBaseContext().getSystemService(ACTIVITY_SERVICE);
         String currentApp = am.getRunningTasks(1).get(0).topActivity.getPackageName();
-        Log.v("INFO currentapp: ", currentApp);
+        //Log.v("INFO currentapp: ", currentApp);
 
     }
 }
@@ -610,7 +610,7 @@ public void newgettopactivity(){
         ActivityManager am = ((ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE));
         List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(5);
         packageName = taskInfo.get(0).topActivity.getPackageName();
-        Log.v("INFO NEW", "top from Receiver app = " + packageName);
+       // Log.v("INFO NEW", "top from Receiver app = " + packageName);
         for (ActivityManager.RunningTaskInfo info : taskInfo) {
             if (info.topActivity.getPackageName().equalsIgnoreCase("com.google.android.gms")) {
 
@@ -623,7 +623,7 @@ public void newgettopactivity(){
             if (!processes.get(i).name.isEmpty()) {
                 packageName = processes.get(i).name;
 
-                Log.e("INFO NEW", "top from Receiver app=" + packageName);
+             //   Log.e("INFO NEW", "top from Receiver app=" + packageName);
 
 
 
@@ -639,7 +639,7 @@ public void newgettopactivity(){
                         packageName = processes.get(i).name;
                     }
                 }
-                Log.v("INFO NEW", "top app from Receiver = " + packageName);
+             //   Log.v("INFO NEW", "top app from Receiver = " + packageName);
             }
         }
     }
@@ -660,7 +660,7 @@ public void getTopactivitySinPermisos(){
   //  refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
 
 
-    refreshNotifications("TE QUEDAN: " + hms);
+    refreshNotifications("REMAINIG TIME: " + hms);
 
 
         ActivityManager activityManager = (ActivityManager) getSystemService (Context.ACTIVITY_SERVICE);
@@ -716,7 +716,7 @@ public void getTopactivitySinPermisos(){
 
         if (!(lastAppPN.equals(packageName))) {
             lastAppPN = packageName;
-            Log.v("INFO currentapp on get ", packageName);
+           // Log.v("INFO currentapp on get ", packageName);
 
 
         }
@@ -758,7 +758,7 @@ public void getTopactivitySinPermisos(){
     public void onDestroy() {
 
         cdt.cancel();
-        Log.i("INFO", "Timer cancelled");
+       // Log.i("INFO", "Timer cancelled");
         super.onDestroy();
 
 
@@ -775,7 +775,7 @@ public void getTopactivitySinPermisos(){
         if (instance != null) {
             instance.stopSelf();
 
-            Log.v("INFO  ",  "proceso parado!!!");
+           // Log.v("INFO  ",  "proceso parado!!!");
 
 
         }
@@ -834,7 +834,7 @@ public void getTopactivitySinPermisos(){
 
 
 
-        Log.v("INFO  ",  "proceso parado y tiempo guardado!!!");
+      //  Log.v("INFO  ",  "proceso parado y tiempo guardado!!!");
     }
 
 }

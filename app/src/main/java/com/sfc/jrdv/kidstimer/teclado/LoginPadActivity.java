@@ -305,7 +305,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //probamos a recuperarlo
 
-        decodenumfinalcontiempo(clave,tiempo);//TODO quitar ya sabemos que funciona ok
+        //decodenumfinalcontiempo(clave,tiempo);//TODO quitar ya sabemos que funciona ok
 
         //lo devolvemos
 
@@ -364,7 +364,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         if (NumeroFinalDecode.equals(clave)){
 
-            Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ clave );
+         //   Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ clave );
 
         }
 
@@ -413,7 +413,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
             public void afterTextChanged(Editable editable) {
                 if (LoginPadActivity.this.mUserAccessCode.getText().length() == USER_PIN_MAX_CHAR) {
 
-                    Log.e("INFO","hemos llegado al nuemro maximo de 4 numeros");
+                 //   Log.e("INFO","hemos llegado al nuemro maximo de 4 numeros");
 
 
                     String numerometido=LoginPadActivity.this.mUserAccessCode.getText().toString();
@@ -521,7 +521,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
             //this.mLoginProgress.setVisibility(View.GONE);
             // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-            Log.e("INFO", "acertaste!!!!!");
+          //  Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -544,7 +544,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
             //this.mLoginProgress.setVisibility(View.GONE);
             // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-            Log.e("INFO", "acertaste!!!!!");
+          //  Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -565,7 +565,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //this.mLoginProgress.setVisibility(View.GONE);
         // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-        Log.e("INFO", "acertaste!!!!!");
+      //  Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -586,7 +586,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //this.mLoginProgress.setVisibility(View.GONE);
         // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-        Log.e("INFO", "acertaste!!!!!");
+      //  Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -604,7 +604,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
     else if(chequeanum.equals("ESPECIAL")){
 
-            Log.e("INFO", "acertaste ESPECIAL!!!!!");
+          //  Log.e("INFO", "acertaste ESPECIAL!!!!!");
 
 
 
