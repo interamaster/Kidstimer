@@ -109,8 +109,8 @@ public class LockService extends Service {
 
             //ya habiamos guardao el tiempo..lo recuperamos
 
-            //TODO quitar eso solo para probar timnepos      :  tiempoTotalParaJugar=tiempoRstanteenPREF;
-            tiempoTotalParaJugar=10000;
+            tiempoTotalParaJugar=tiempoRstanteenPREF;
+
 
         }
         else {
