@@ -3,14 +3,17 @@ package com.sfc.jrdv.kidstimer;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ProviderInfo;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -29,10 +32,8 @@ import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
@@ -40,7 +41,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static android.R.attr.y;
+import static android.R.attr.key;
+import static android.R.id.message;
 
 
 public class LockService extends Service {
@@ -285,12 +287,49 @@ public class LockService extends Service {
 
             } else {
                 // YOUR CODE
-              //  Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+              // Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
                 //si existe timer lo paramos
                 if (cdt != null) {
                     cdt.cancel();
                 }
+            }
+
+
+            //3º)chequeamos si es una de intento de cambio de hora
+
+            boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
+            if (intento_CambioHora) {
+                //intewnto cambiar hora
+
+
+
+                //toastHandler.sendEmptyMessage(0);//asi simempre pone "test"..npi =¿?=¿
+                //lo hago mejor asi
+
+
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+
+                    }
+                });
+                //poenmos a true le intento
+
+
+
+                Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,true).commit();
+
+
+
+                //ponemosm una notificacion://no funciona...que le den, el toast ams tiempo
+
+
+
             }
 
         }
@@ -403,9 +442,9 @@ public class LockService extends Service {
 
      // Scheduling task at today : 00:00:00 PM
      Calendar calendar = Calendar.getInstance();
-     calendar.set(Calendar.HOUR_OF_DAY, 23);
-     calendar.set(Calendar.MINUTE, 59);
-     calendar.set(Calendar.SECOND, 59);
+     calendar.set(Calendar.HOUR_OF_DAY, 03);
+     calendar.set(Calendar.MINUTE, 00);
+     calendar.set(Calendar.SECOND, 05);
      Date time = calendar.getTime();
 
     // Read more at http://www.java2blog.com/2015/08/java-timer-example.html
@@ -427,7 +466,7 @@ public class LockService extends Service {
         public void run()
         {
             toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
-           // Log.i("INFO", "ES UN NUEVO DIA!!!");
+         // Log.i("INFO", "ES UN NUEVO DIA!!!");
 
             //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
           CalcularNewDayTime4Play();
@@ -456,73 +495,92 @@ public class LockService extends Service {
 
 
 
-    //1º)PARAMOS EL TIMER
-
-    //si existe timer lo paramos
-    if (cdt!=null){
-        cdt.cancel();
-    }
+        Boolean IntnetoCambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false);//por defecto vale 0
 
 
-    Calendar calendar = Calendar.getInstance();
-    int day = calendar.get(Calendar.DAY_OF_WEEK);
+        if (IntnetoCambioHora){
 
-    switch (day) {
+            //se intento cambiar la hora..
+            Log.d("INFO","se decteto intento de cambio  en CalcularNewDayTime4Play");
 
+            //lo ponemos de nuevo a normal:
+            //poenmos a true le intento
 
-        case Calendar.MONDAY:
-            // Current day is Monday
-            //entre semana 1 HORA
-            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false).commit();
 
-            break;
+        }
 
-        case Calendar.TUESDAY:
-            //entre semana 1 HORA
-            tiempoTotalParaJugar = 1*60 * 60 * 1000;
+        else {
 
-            break;
+            //1º)PARAMOS EL TIMER
 
-        case Calendar.WEDNESDAY:
-            //entre semana 1 HORA
-            tiempoTotalParaJugar = 1*60 * 60 * 1000;
-
-            break;
+            //si existe timer lo paramos
+            if (cdt != null) {
+                cdt.cancel();
+            }
 
 
-        case Calendar.THURSDAY:
-            //entre semana 1 HORA
-          tiempoTotalParaJugar = 1*60 * 60 * 1000;
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_WEEK);
 
-           // tiempoTotalParaJugar = 20* 1000;
-
-
-            break;
-
-        case Calendar.FRIDAY:
-            //entre semana 1 HORA
-          // tiempoTotalParaJugar = 1*60 * 60 * 1000;
+            switch (day) {
 
 
-             tiempoTotalParaJugar = 10* 1000;
-            break;
+                case Calendar.MONDAY:
+                    // Current day is Monday
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 1 * 60 * 60 * 1000;
 
-        case Calendar.SATURDAY:
-            //entre semana 1 HORA
-            tiempoTotalParaJugar = 3*60 * 60 * 1000;
+                    break;
+
+                case Calendar.TUESDAY:
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 1 * 60 * 60 * 1000;
+
+                    break;
+
+                case Calendar.WEDNESDAY:
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 1 * 60 * 60 * 1000;
+
+                    break;
 
 
-            break;
+                case Calendar.THURSDAY:
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 1 * 60 * 60 * 1000;
 
-        case Calendar.SUNDAY:
-            //entre semana 1 HORA
-            tiempoTotalParaJugar =3*60 * 60 * 1000;
+                    // tiempoTotalParaJugar = 20* 1000;
 
-            break;
-    }
-    //una vez sepamos el dia que ajuste el Timerdel timepo de jeugo con este valor: en TimerTiempoJuegoIniciarOajustar()
-    //no px da erro de thread ?¿?
-   // TimerTiempoJuegoIniciarOajustar();
+
+                    break;
+
+                case Calendar.FRIDAY:
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 1 * 60 * 60 * 1000;
+
+
+                    //  tiempoTotalParaJugar = 10* 1000;
+                    break;
+
+                case Calendar.SATURDAY:
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 3 * 60 * 60 * 1000;
+
+
+                    break;
+
+                case Calendar.SUNDAY:
+                    //entre semana 1 HORA
+                    tiempoTotalParaJugar = 3 * 60 * 60 * 1000;
+
+                    break;
+            }
+            //una vez sepamos el dia que ajuste el Timerdel timepo de jeugo con este valor: en TimerTiempoJuegoIniciarOajustar()
+            //no px da erro de thread ?¿?
+            // TimerTiempoJuegoIniciarOajustar();
+
+        }
 
 }
 
@@ -531,7 +589,7 @@ public class LockService extends Service {
         @Override
         public void handleMessage(Message msg)
         {
-            Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
         }
     };
 

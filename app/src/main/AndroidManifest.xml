@@ -33,6 +33,16 @@
         </receiver>
 
 
+        //para detectar cambio hora
+
+        <receiver android:name=".IntentoCambiarHoraIntentReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
+
+
+
         //para device admin
 
 

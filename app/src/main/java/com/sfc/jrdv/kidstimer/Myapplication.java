@@ -26,6 +26,7 @@ public class Myapplication extends Application {
     public static  final String PREF_TiempoRestante="PrefTiempoRestante";
     public static final String PREF_NOmbre_Nino="KidName";
     public static final String PREF_BOOL_NINOYAOK="NO";
+    public static final String PREF_BOOL_INTENTO_CAMBIO_HORA="BoolCambioHora";
 
     @Override
     public void onCreate() {
