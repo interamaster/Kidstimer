@@ -48,15 +48,17 @@ public class MainActivity extends AppCompatActivity {
 
             StartServiceYa();
 
+           // setContentView(R.layout.activity_main);//TODO quitar cunado no queramos probar ekl gewnerator
+
 
         }
 
         //2º)si no al lio
 
 
+        // setContentView(R.layout.activity_main);//TODO quitar cunado no queramos probar ekl gewnerator
 
-
-        setContentView(R.layout.activity_main_2);//TODO de omeonto nova cargar ninguna layout
+        setContentView(R.layout.activity_main_2);//TODO dponer en modo normal sin priobar el generator
 
 
         //To hide AppBar for fullscreen.

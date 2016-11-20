@@ -29,6 +29,7 @@ import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
 import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
+import java.security.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -76,12 +77,23 @@ public class LockService extends Service {
     private NotificationManager mNotificationManager;
 
 
+
+    //PARA LAS 24 CON ScheduledExecutorService EN VEZ DE TIMER
+
+    ScheduledExecutorService scheduledExecutorService;
+
+
+
+
     @Override
     public void onCreate() {
         super.onCreate();
 
 
+        Log.d("INFO","INICIADO onCreate EN SERVICE!!");
+
         // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
+        //NO CREO Q SEA NECESARIO LA TENRELO EN MANIFEST
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         BroadcastReceiver mReceiver = new ScreenReceiver();
@@ -89,6 +101,10 @@ public class LockService extends Service {
 
 
         mContext = this;
+
+        //EN ONCRETE POENMOS A FALSE EL DEL TIME_SET(POR SI CAMBIA EN ALGUNOS DISPOSITIVOS=
+
+        Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false).commit();
 
 
         //emepezamos el timer de cada 24h at nidnight
@@ -117,6 +133,11 @@ public class LockService extends Service {
         }
         else {
 
+
+            Boolean IntnetoCambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false);//por defecto vale 0
+
+
+            Log.d("INFO"," INTENTO CAMBIO DE HORA EN ONCREAT SERVICE: "+IntnetoCambioHora);
 
         //lo hacemos desde la funcion que calcula que dia es y segun el dia le da un tiempo:
 
@@ -187,6 +208,10 @@ public class LockService extends Service {
         cdt.start();
 
         */
+
+
+
+
     }
 
 
@@ -205,6 +230,7 @@ public class LockService extends Service {
         //ej leer el extra del intent:
 
 
+        Log.d("INFO","REINICIADO onStartCommand EN SERVICE!!");
 
 
 
@@ -431,7 +457,7 @@ public class LockService extends Service {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////24 h timer//////////////////////////////////////////////////////////
+//////////////////////////////////////////////24 h timer NO FUNCIONA SI SE TOCA HORA/DIA!!////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
  private void startTimerNewDay() {
@@ -442,15 +468,26 @@ public class LockService extends Service {
 
      // Scheduling task at today : 00:00:00 PM
      Calendar calendar = Calendar.getInstance();
-     calendar.set(Calendar.HOUR_OF_DAY, 03);
+     calendar.set(Calendar.HOUR_OF_DAY, 00);
      calendar.set(Calendar.MINUTE, 00);
-     calendar.set(Calendar.SECOND, 05);
+     calendar.set(Calendar.SECOND, 22);
+
+     //este time es en el pasado por eso se ejecuta del tiron
+     //asi que le añado 24 horas(1 DIA)
+
+      calendar.add(Calendar.DATE,1);
+
      Date time = calendar.getTime();
+
+     Log.d("INFO"," TIMER EMPEZARA EL :  "+time.toString());
+
+
+
 
     // Read more at http://www.java2blog.com/2015/08/java-timer-example.html
 
        //  int period = 10000;//10secs
-        int perioddia= 1000 * 60 * 60 * 24 * 7;//24h
+        int perioddia= 1000 * 60 * 60 * 24 * 1;//24h
 
 
      timer.schedule(new mainTask() ,time,perioddia);
@@ -465,8 +502,8 @@ public class LockService extends Service {
 
         public void run()
         {
-            toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
-         // Log.i("INFO", "ES UN NUEVO DIA!!!");
+            //toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
+         Log.i("INFO", "ES UN NUEVO DIA!!!");
 
             //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
           CalcularNewDayTime4Play();
@@ -490,10 +527,76 @@ public class LockService extends Service {
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////24 h timer con scheduleEXECUTOR//////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private void startTimerNewDay2(){
+
+        // Schedule to run every day in midnight
+
+        // Scheduling task at today : 00:00:22 PM
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 00);
+        calendar.set(Calendar.MINUTE, 00);
+        calendar.set(Calendar.SECOND, 22);
+
+        //este time es en el pasado por eso se ejecuta del tiron
+        //asi que le añado 24 horas(1 DIA)
+
+        calendar.add(Calendar.DATE,1);
+
+        Date time = calendar.getTime();
+        long timeinMilisec=calendar.getTimeInMillis();
+
+        Log.d("INFO"," TIMER EMPEZARA EL :  "+time.toString());
+
+
+        //  int period = 10000;//10secs
+        int perioddia= 1000 * 60 * 60 * 24 * 1;//24h
+
+        //ScheduledExecutorService scheduler =  Executors.newSingleThreadScheduledExecutor();
+
+        scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+        scheduledExecutorService.scheduleAtFixedRate
+                (new Runnable() {
+                    public void run() {
+                        // call service
+
+                        //toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
+                        Log.i("INFO", "ES UN NUEVO DIA!!!");
+
+                        //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
+                        CalcularNewDayTime4Play();
+
+
+                        //si existe timer lo paramos
+                        if (cdt!=null){
+                            cdt.cancel();
+                        }
+
+
+                        //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+                        TimerTiempoJuegoIniciarOajustar();
+
+
+
+
+                    }
+                }, timeinMilisec, perioddia, TimeUnit.MILLISECONDS);
+
+    }
+
+
+
 
     private void CalcularNewDayTime4Play(){
 
 
+
+        Log.d("INFO","INICIADO CalcularNewDayTime4Play EN SERVICE!!");
 
         Boolean IntnetoCambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false);//por defecto vale 0
 
@@ -511,6 +614,8 @@ public class LockService extends Service {
         }
 
         else {
+
+            Log.d("INFO"," AJSUTE TIMEPO OK EN  CalcularNewDayTime4Play EN SERVICE !!");
 
             //1º)PARAMOS EL TIMER
 
@@ -564,15 +669,15 @@ public class LockService extends Service {
                     break;
 
                 case Calendar.SATURDAY:
-                    //entre semana 1 HORA
-                    tiempoTotalParaJugar = 3 * 60 * 60 * 1000;
+                    //FINDE 2 HORA
+                    tiempoTotalParaJugar = 2 * 60 * 60 * 1000;
 
 
                     break;
 
                 case Calendar.SUNDAY:
-                    //entre semana 1 HORA
-                    tiempoTotalParaJugar = 3 * 60 * 60 * 1000;
+                    //FINDE  2 HORA
+                    tiempoTotalParaJugar = 2 * 60 * 60 * 1000;
 
                     break;
             }
@@ -716,6 +821,7 @@ public void getTopactivitySinPermisos(){
             TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar) % TimeUnit.MINUTES.toSeconds(1));
 
   //  refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
+
 
 
     refreshNotifications("REMAINIG TIME: " + hms);
