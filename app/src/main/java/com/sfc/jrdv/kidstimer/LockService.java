@@ -257,6 +257,14 @@ public class LockService extends Service {
 
                 if (intentExtraTime != null) {
 
+
+                    if (intentExtraTime.equals("1")) {
+                        //EL EXTRA ES 1..OSEA CASTIGO
+
+                        tiempoTotalParaJugar=5000;
+
+                    }
+
                     tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
                 }
 

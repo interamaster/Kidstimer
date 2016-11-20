@@ -48,7 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
             StartServiceYa();
 
-           // setContentView(R.layout.activity_main);//TODO quitar cunado no queramos probar ekl gewnerator
+
+
+            // y ademas q vaya al loggingpad
+
+            Intent lockIntent = new Intent(this, LoginPadActivity.class);
+            lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.startActivity(lockIntent);
+
+
+            // setContentView(R.layout.activity_main);//TODO quitar cunado no queramos probar ekl gewnerator
 
 
         }

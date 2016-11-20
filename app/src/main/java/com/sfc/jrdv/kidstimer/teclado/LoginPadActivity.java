@@ -101,6 +101,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     private String numeroClaveFinal30min;
     private String numeroClaveFinal1HORA;
     private String numeroClaveFinal3HORAS;
+    private String numeroClaveFinalCASTIGO;
 
     //para hablar
 
@@ -223,7 +224,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         numeroClaveFinal3HORAS=generaNumeroClave("3HORAS");
         Log.d("INFO","el numero secreto para 3 HORAS "+ numeroClaveFinal3HORAS);
 
-
+        numeroClaveFinalCASTIGO=generaNumeroClave("CASTIGO");
+        Log.d("INFO","el numero secreto para CASTIGO "+ numeroClaveFinalCASTIGO);
 
 
     }
@@ -454,6 +456,14 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                         ChequeaResultado("3HORAS");
 
                     }
+
+                    else if (numerometido.equals(numeroClaveFinalCASTIGO))  {
+                        //numero especial fijo da 1 hora mas
+
+                        ChequeaResultado("CASTIGO");
+
+                    }
+
                     else{
 
                         //hemos fallado
@@ -601,8 +611,29 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         finish();
     }
 
+        else  if (chequeanum.equals("CASTIGO")){
+            ////si hemos acertado:
 
-    else if(chequeanum.equals("ESPECIAL")){
+            //this.mLoginProgress.setVisibility(View.GONE);
+            // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
+            //  Log.e("INFO", "acertaste!!!!!");
+
+
+
+            //reiniicmaos el intet service psasndole un valor nuevo
+
+            Intent intent =new Intent(this,LockService.class);
+            intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera CASTIGO!!!!!!!!");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+            intent.putExtra(LockService.EXTRA_TIME,"1");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+            startService(intent);
+
+
+            finish();
+        }
+
+
+
+        else if(chequeanum.equals("ESPECIAL")){
 
           //  Log.e("INFO", "acertaste ESPECIAL!!!!!");
 
