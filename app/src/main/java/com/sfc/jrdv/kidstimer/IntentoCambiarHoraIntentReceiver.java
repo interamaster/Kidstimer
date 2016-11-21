@@ -22,6 +22,7 @@ public class IntentoCambiarHoraIntentReceiver extends BroadcastReceiver {
             CambioDeHora=true;
             Intent pushIntent = new Intent(context, LockService.class);
             pushIntent.putExtra("cambio_de_hora", CambioDeHora);
+            pushIntent.putExtra(LockService.EXTRA_MESSAGE,"cambio_de_hora");
             context.startService(pushIntent);
         }
     }

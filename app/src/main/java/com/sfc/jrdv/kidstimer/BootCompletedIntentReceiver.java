@@ -15,6 +15,7 @@ public class BootCompletedIntentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
             Intent pushIntent = new Intent(context, LockService.class);
+            pushIntent.putExtra(LockService.EXTRA_MESSAGE,"REBOOT");
             context.startService(pushIntent);
         }
     }

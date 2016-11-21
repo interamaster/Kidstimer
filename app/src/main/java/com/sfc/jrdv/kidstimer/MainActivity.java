@@ -124,10 +124,11 @@ public class MainActivity extends AppCompatActivity {
     */
 
     public void startService(View view) {
+        //SOLO SE UNSA SI SE PONE LE XML ORIGINAL DE PULSAR BOTON PARA INICAR SERVICE!!!
 
         //Intent intent =new Intent(this,ejemploService.class);
         Intent intent =new Intent(this,LockService.class);
-        intent.putExtra(LockService.EXTRA_MESSAGE,"texto 2 a pasar");
+        intent.putExtra(LockService.EXTRA_MESSAGE,"DesdeMain");
         intent.putExtra(LockService.EXTRA_TIME,"0");//al arranacra no le damos mas tiempo pero hay que psar el intent
         startService(intent);
 
@@ -156,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loggingCheck(View view) {
+        //SOLO SE UNSA SI SE PONE LE XML ORIGINAL DE PULSAR BOTON PARA INICAR SERVICE!!!
 
         //Intent intent =new Intent(this,ejemploService.class);
         Intent intent =new Intent(this,LoginPadActivity.class);
@@ -164,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
+        //SOLO SE USA AL CREAR EL NINO LA PRIMERA VEZ!!
 
 
         //1º)chequeamos nombre ok
@@ -179,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
             //esta nombre ok...empieza
 
-            //avisamos del punto conseguido!!!
+
 
             final Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialogalertlayout);
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
     private void StartServiceYa() {
 
         Intent intent =new Intent(this,LockService.class);
-        intent.putExtra(LockService.EXTRA_MESSAGE,"texto 2 a pasar");
+        intent.putExtra(LockService.EXTRA_MESSAGE,"DesdeMain");
         intent.putExtra(LockService.EXTRA_TIME,"0");//al arranacra no le damos mas tiempo pero hay que psar el intent
         startService(intent);
 

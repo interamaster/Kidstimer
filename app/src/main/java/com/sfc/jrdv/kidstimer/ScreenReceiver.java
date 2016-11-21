@@ -23,6 +23,7 @@ public class ScreenReceiver  extends BroadcastReceiver {
         }
         Intent i = new Intent(context, LockService.class);
         i.putExtra("screen_state", screenOff);
+        i.putExtra(LockService.EXTRA_MESSAGE,"screen_state");
         context.startService(i);
     }
 

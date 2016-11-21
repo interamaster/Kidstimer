@@ -17,6 +17,7 @@ public class AlarmIntentReceiver extends BroadcastReceiver {
             Alarma=true;
             Intent pushIntent = new Intent(context, LockService.class);
             pushIntent.putExtra("Alarma_reseteo_timers", Alarma);
+            pushIntent.putExtra(LockService.EXTRA_MESSAGE,"Alarma_reseteo_timers");
             context.startService(pushIntent);
 
     }

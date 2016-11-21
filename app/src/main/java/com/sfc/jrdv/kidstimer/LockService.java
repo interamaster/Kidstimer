@@ -12,14 +12,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.Display;
 import android.widget.Toast;
 
 import com.jaredrummler.android.processes.AndroidProcesses;
@@ -30,7 +33,6 @@ import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
@@ -164,7 +166,10 @@ public class LockService extends Service {
 
         //no lo podemois hacer en una funcion aparate porque da crash!!
         //pero se modifico la funcion y ya si!!!
-        TimerTiempoJuegoIniciarOajustar();
+
+        //EN REALIDAD ESTO SE LLAMA DESDE ONSTARTCOMMAND!!!! AL PASARLE EL EXTRA DesdeMain
+        //ASI Q LO QUITO DE AQUI
+       // TimerTiempoJuegoIniciarOajustar();//TODO QUITADO OJO
 
 
 
@@ -258,47 +263,38 @@ public class LockService extends Service {
         if(intent!=null) {
 
 
+            Log.d("INFO", "intent not null  onStartCommand EN SERVICE!!" + intent.getStringExtra(EXTRA_MESSAGE));
 
-            Log.d("INFO","intent not null  onStartCommand EN SERVICE!!");
             //1º)sacamos los valores de EXTRA_TIME y EXTRA_MSG
 
-            String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
-          //  Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
+            String intentExtra = intent.getStringExtra(EXTRA_MESSAGE);
+            //  Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
 
             String intentExtraTime = intent.getStringExtra(EXTRA_TIME);
 
 
-                //sumamos ese tiempo extra: si se puede:
+            //sumamos ese tiempo extra: si se puede
+            //SI ES UN CASTIGO EL EXTRA MESSAGE ES =1..ASI PONEMOS QUE QUEDEN SOLO 5 SECS
 
-                if (intentExtraTime != null) {
+            if (intentExtraTime != null) {
 
 
-                    if (intentExtraTime.equals("1")) {
-                        //EL EXTRA ES 1..OSEA CASTIGO
+                if (intentExtraTime.equals("1")) {
+                    //EL EXTRA ES 1..OSEA CASTIGO
 
-                        tiempoTotalParaJugar=5000;
+                    tiempoTotalParaJugar = 5000;
 
-                    }
-
-                    tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
                 }
 
+                tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
+            }
 
 
+            if (intentExtra!=null &&intentExtra.equals("DesdeMain")) {
 
-            //2º)chequeamos si es un intent de pantalla
+                //  Log.d("INFO","intent  DESDEMAIN onStartCommand EN SERVICE!!" );
 
-            boolean screenOn = intent.getBooleanExtra("screen_state", true);
-            if (!screenOn) {
-                // YOUR CODE
-                 Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
-
-                //reiniciamos el timercountdown
-                //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
-
-              //  Log.i("INFO", "Restarting  timer...");
-
-                //si existe timer lo paramos
+                //estamos arrancadno desde main!!! iniciamos el counter
                 if (cdt != null) {
                     cdt.cancel();
                 }
@@ -306,6 +302,33 @@ public class LockService extends Service {
                 //reakustamos el timer al encender pantalla
 
                 TimerTiempoJuegoIniciarOajustar();
+
+
+            }
+
+
+            //2º)chequeamos si es un intent de pantalla
+            if (intentExtra!=null &&intentExtra.equals("screen_state")) {
+
+
+                boolean screenOn = intent.getBooleanExtra("screen_state", true);
+                if (!screenOn) {
+                    // YOUR CODE
+                    Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
+
+                    //reiniciamos el timercountdown
+                    //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
+
+                    //  Log.i("INFO", "Restarting  timer...");
+
+                    //si existe timer lo paramos
+                    if (cdt != null) {
+                        cdt.cancel();
+                    }
+
+                    //reakustamos el timer al encender pantalla
+
+                    TimerTiempoJuegoIniciarOajustar();
 
 
             /*
@@ -334,93 +357,92 @@ public class LockService extends Service {
 
             */
 
-            } else {
-                // YOUR CODE
-              Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+                } else {
+                    // YOUR CODE
+                    Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
-                //si existe timer lo paramos
-                if (cdt != null) {
-                    cdt.cancel();
+                    //si existe timer lo paramos
+                    if (cdt != null) {
+                        cdt.cancel();
+                    }
                 }
+
             }
-
-
             //3º)chequeamos si es una de intento de cambio de hora
 
-            boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
-            if (intento_CambioHora) {
-                //intewnto cambiar hora
+            if (intentExtra!=null && intentExtra.equals("cambio_de_hora")) {
+
+                boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
+                if (intento_CambioHora) {
+                    //intewnto cambiar hora
 
 
-
-                //toastHandler.sendEmptyMessage(0);//asi simempre pone "test"..npi =¿?=¿
-                //lo hago mejor asi
-
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+                    //toastHandler.sendEmptyMessage(0);//asi simempre pone "test"..npi =¿?=¿
+                    //lo hago mejor asi
 
 
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+
+
+                        }
+                    });
+                    //poenmos a true le intento
+
+
+                    Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true).commit();
+
+
+                    //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
+
+                    if (timer != null) {
+                        timer.cancel();
                     }
-                });
-                //poenmos a true le intento
+                    timer = null;
 
 
-
-                Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,true).commit();
-
+                    startTimerNewDay2();
 
 
-                //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
-
-                if (timer!=null) {
-                    timer.cancel();
                 }
-                timer=null;
-
-
-                startTimerNewDay2();
-
-
-
             }
 
             //4ºchequeamos si es una alarmaMagerBrodacast
 
-            boolean AlarmaMagerBrodacast = intent.getBooleanExtra("Alarma_reseteo_timers", false);
-            if (AlarmaMagerBrodacast) {
-                //AlarmaReceiver de Broadcast recibida
+            if (intentExtra!=null && intentExtra.equals("Alarma_reseteo_timers")) {
+                boolean AlarmaMagerBrodacast = intent.getBooleanExtra("Alarma_reseteo_timers", false);
+                if (AlarmaMagerBrodacast) {
+                    //AlarmaReceiver de Broadcast recibida
 
 
-
-                //ESTO SERA LO QUE NOS LLAME DESDE EL BRODCASRECEIVER:AlarmIntentReceiver
-                //ASI QUE AQUI EJECUTAMOS EL RESTERO DE LOS TIMERS
-
-
-                Log.i("INFO", "ES UN NUEVO DIA!!!");
-
-                //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
-                CalcularNewDayTime4Play();
+                    //ESTO SERA LO QUE NOS LLAME DESDE EL BRODCASRECEIVER:AlarmIntentReceiver
+                    //ASI QUE AQUI EJECUTAMOS EL RESTERO DE LOS TIMERS
 
 
-                //si existe timer lo paramos
-                if (cdt!=null){
-                    cdt.cancel();
+                    Log.i("INFO", "ES UN NUEVO DIA!!!");
+
+                    //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
+                    CalcularNewDayTime4Play();
+
+
+                    //si existe timer lo paramos
+                    if (cdt != null) {
+                        cdt.cancel();
+                    }
+
+
+                    //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+                    TimerTiempoJuegoIniciarOajustar();
+
+
                 }
 
-
-                //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
-                TimerTiempoJuegoIniciarOajustar();
-
-
-
             }
-
         }
 
 
@@ -441,11 +463,18 @@ public class LockService extends Service {
     private void TimerTiempoJuegoIniciarOajustar(){
 
 
-        //TODO pte implemntar logica si el servicio se ha parado para que no empieze de neuvo el timer
-        //aqui ya sabemos el valor de  : tiempoTotalParaJugar
-        //ESTE METODO NO SE PUEDE LLMAR DESDE ONCREATE!!!!
-        //PERO SI DESDE ONSTARTCOMMAND!!!
-        //NI SIQUIERA CON EL HANDLER ESTE:
+        //SI LA PANTALLA ESTA APAGADA..ESTO VUELVE
+
+        if (isScreenOn(this)) {
+            Log.d("INFO","PANTALLA ON:"+ (isScreenOn(this)));//FUNCIONA OK
+            //ES UNA DOBLE SEGURIDAD PX A VECES SGIGUE CONTANTO AUN SIN USAR....
+                //solo se ejecuta si l apnatalla esta apagada
+
+            //TODO pte implemntar logica si el servicio se ha parado para que no empieze de neuvo el timer
+            //aqui ya sabemos el valor de  : tiempoTotalParaJugar
+            //ESTE METODO NO SE PUEDE LLMAR DESDE ONCREATE!!!!
+            //PERO SI DESDE ONSTARTCOMMAND!!!
+            //NI SIQUIERA CON EL HANDLER ESTE:
 /*
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                      @Override
@@ -479,41 +508,51 @@ public class LockService extends Service {
 
 */
 
-        //ASI Q LO DEJAMOS COMO ESTABA PERO DESDE ON CREATE NO SE LLAMARA!!
-        //original:
+            //ASI Q LO DEJAMOS COMO ESTABA PERO DESDE ON CREATE NO SE LLAMARA!!
+            //original:
 
-        //CON ESTO DEL LOOPER SE ARREGLA!!!!
+            //CON ESTO DEL LOOPER SE ARREGLA!!!!
+            //TODO COM YA NO SE LLAMA DESDE ON CREATE LO QUITAMOS!!!
+            /*
+            Looper.getMainLooper();
 
-        Looper.getMainLooper();
+            if (Looper.myLooper() == null) {
+                Looper.prepare();
+            }
+            */
 
-        if(Looper.myLooper() == null){
-            Looper.prepare();
+            cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                    //Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
+                    //update tiempoTotalParaJugar with the remaining time left
+                    tiempoTotalParaJugar = millisUntilFinished;
+
+                    if (!isScreenOn(mContext)){
+                        // POR SEGURIDAD NOS ASEGUIRAMOS QEU SOLO FUNCIONE SI La PNATLLA ESTA ENCENDIDA
+                        cdt.cancel();
+
+                        //y nos autollamamos..que solo empezara si realemnte esta encendida!!
+
+                        TimerTiempoJuegoIniciarOajustar();
+                    }
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    //TODO se acabo la tablet!!
+                    //  Log.i("INFO", "Timer finished");
+                }
+            };
+
+            cdt.start();
+
+
         }
-
-        cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-              //  Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
-                //update tiempoTotalParaJugar with the remaining time left
-                tiempoTotalParaJugar = millisUntilFinished;
-                // TODO ACTUALIZAR NOTIFICACION QUE ACTUALIZE EL TIMEPO RESTANTE Y QUE SE QUITE AL ABRIRLA(UN TIMER COMO EL TIME IT PERO AL REVES)
-
-            }
-
-            @Override
-            public void onFinish() {
-
-                //TODO se acabo la tablet!!
-              //  Log.i("INFO", "Timer finished");
-            }
-        };
-
-        cdt.start();
-
-
-
 
 
     }
@@ -884,9 +923,35 @@ public void newgettopactivity(){
 }
 
 
+    /**
+     * Is the screen of the device on.
+     * @param context the context
+     * @return true when (at least one) screen is on
+     */
+    public boolean isScreenOn(Context context) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            boolean screenOn = false;
+            for (Display display : dm.getDisplays()) {
+                if (display.getState() != Display.STATE_OFF) {
+                    screenOn = true;
+                }
+            }
+            return screenOn;
+        } else {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            //noinspection deprecation
+            return pm.isScreenOn();
+        }
+    }
 
 public void getTopactivitySinPermisos(){
 
+
+
+    //VAMOS A CHEQEUAR ESTADO DE PANTALLA:
+
+    //Log.d("INFO","PANTALLA ON:"+ (isScreenOn(this)));//FUNCIONA OK
 
     //ACTUALIZAMOS LA NOTIFICACION
 
@@ -976,7 +1041,7 @@ public void getTopactivitySinPermisos(){
     long seconds = TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar)%60;//el resto!!
 
 
-    Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
+    //Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
 
 
 
