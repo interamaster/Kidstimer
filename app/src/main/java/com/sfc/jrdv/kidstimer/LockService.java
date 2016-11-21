@@ -973,7 +973,7 @@ public void getTopactivitySinPermisos(){
         {
 
               packageName = activityManager.getRunningAppProcesses().get(0).processName;
-            // Log.v("INFO currentapp: ", packageName);
+            // Log.v("INFO currentapp: ", packageName); //com.android.settings es el de settings independiente de que parte!!
         }
         else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
         {
@@ -1020,7 +1020,7 @@ public void getTopactivitySinPermisos(){
 
         if (!(lastAppPN.equals(packageName))) {
             lastAppPN = packageName;
-           // Log.v("INFO currentapp on get ", packageName);
+          //  Log.v("INFO currentapp on get ", packageName);
 
 
         }
