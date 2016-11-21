@@ -3,17 +3,13 @@ package com.sfc.jrdv.kidstimer;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.app.job.JobInfo;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -29,7 +25,6 @@ import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
 import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
-import java.security.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -41,9 +36,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import static android.R.attr.key;
-import static android.R.id.message;
 
 
 public class LockService extends Service {
@@ -63,7 +55,7 @@ public class LockService extends Service {
     private long tiempoTotalParaJugar = 30000;//aqui se guardar el tiempo tiempoTotalParaJugar!!!!
 
     //para saber el dia de la semana:
-    private static Timer timer = new Timer();
+    private static Timer timer ;
     private Context mContext;
 
     //para el intnt Extra info
@@ -350,6 +342,7 @@ public class LockService extends Service {
 
                         Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
 
+
                     }
                 });
                 //poenmos a true le intento
@@ -360,7 +353,13 @@ public class LockService extends Service {
 
 
 
-                //ponemosm una notificacion://no funciona...que le den, el toast ams tiempo
+                //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
+
+                timer.cancel();
+                timer=null;
+
+
+                startTimerNewDay();
 
 
 
@@ -471,6 +470,7 @@ public class LockService extends Service {
  private void startTimerNewDay() {
 
 
+        timer= new Timer();
 
      // Schedule to run every day in midnight
 
@@ -830,6 +830,7 @@ public void getTopactivitySinPermisos(){
 
   //  refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
 
+    Log.d("INFO"," TIMER quedan :  "+tiempoTotalParaJugar);
 
 
     refreshNotifications("REMAINIG TIME: " + hms);
@@ -899,20 +900,35 @@ public void getTopactivitySinPermisos(){
 
          Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
 
+
+
+
+
+
+
+
         // Provide the packagename(s) of apps here, you want to show password activity
         if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) || tiempoTotalParaJugar>=2000) {//TODO PONER TIEMPO A >=1000
 
           //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
-        } else {
-            // DO nothing
-          //TODO quitar para ver logging : Log.v("INFO  sE BLOQUEARIA: ",  lastAppPN);
 
 
+        }
 
-            //TODO bloquear
+
+        else if(tiempoTotalParaJugar<=(1000*60*43)){
+
+            //ponemo le dialog de aviso
+
+            Intent DialogIntent = new Intent(mContext, DialogActivity.class);
+            DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(DialogIntent);
+
+        }
 
 
+        else {
 
             Intent lockIntent = new Intent(mContext, LoginPadActivity.class);
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

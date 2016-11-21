@@ -6,7 +6,7 @@
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -23,36 +23,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-    //para hacerlo auto boot
-
+        //para hacerlo auto boot
         <receiver android:name=".BootCompletedIntentReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-
         //para detectar cambio hora
-
         <receiver android:name=".IntentoCambiarHoraIntentReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
-
-
-
         //para device admin
-
-
         <receiver
             android:name=".DeviceAdmin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
-                android:resource="@xml/device_admin"/>
+                android:resource="@xml/device_admin" />
+
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
@@ -64,27 +55,26 @@
         <service
             android:name=".ejemploService"
             android:exported="false" />
-
-        //android:stopWithTask="false" para que notifique al service al quitarlo de la barra de recientes
+        //android:stopWithTask="false" para que notifique al service al quitarlo de la barra de
+        recientes
         <service
             android:name=".LockService"
             android:exported="false"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false" />
         <service
             android:name=".LockServiceEjemplo1"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".BlockedActivity"></activity>
-
+        <activity android:name=".BlockedActivity" />
         //loginActivity
-
         <activity
             android:name=".teclado.LoginPadActivity"
-            android:theme="@style/Theme.Transparent"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Transparent"></activity>
+        //dialog activity
+        <activity android:name=".DialogActivity"
+            android:theme="@android:style/Theme.Dialog" ></activity>
     </application>
 
 </manifest>
