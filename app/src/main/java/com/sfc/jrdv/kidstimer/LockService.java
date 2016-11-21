@@ -259,6 +259,7 @@ public class LockService extends Service {
 
 
 
+            Log.d("INFO","intent not null  onStartCommand EN SERVICE!!");
             //1º)sacamos los valores de EXTRA_TIME y EXTRA_MSG
 
             String intentExtra=intent.getStringExtra(EXTRA_MESSAGE);
@@ -287,10 +288,10 @@ public class LockService extends Service {
 
             //2º)chequeamos si es un intent de pantalla
 
-            boolean screenOn = intent.getBooleanExtra("screen_state", false);
+            boolean screenOn = intent.getBooleanExtra("screen_state", true);
             if (!screenOn) {
                 // YOUR CODE
-                 Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+                 Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
 
                 //reiniciamos el timercountdown
                 //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
@@ -335,7 +336,7 @@ public class LockService extends Service {
 
             } else {
                 // YOUR CODE
-              // Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+              Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
                 //si existe timer lo paramos
                 if (cdt != null) {
@@ -975,7 +976,7 @@ public void getTopactivitySinPermisos(){
     long seconds = TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar)%60;//el resto!!
 
 
-    //Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
+    Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
 
 
 
