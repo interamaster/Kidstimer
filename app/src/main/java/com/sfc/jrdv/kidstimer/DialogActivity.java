@@ -29,14 +29,6 @@ public class DialogActivity extends AppCompatActivity {
         alertDialog.show();
 
 
-/*
-        final AlertDialog alertDialog = new AlertDialog.Builder(DialogActivity.this).create();
-        alertDialog.setTitle("your title");
-        alertDialog.setMessage("your message");
-        alertDialog.setIcon(R.drawable.timer_icono);
-
-        alertDialog.show();
-*/
 
     }
 }

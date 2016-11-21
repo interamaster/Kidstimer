@@ -140,6 +140,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         MultiplicacionTextview.setText("ENTER CODE "+ninoname);
 
+       // Log.d("INFO"," ON CREATE LOGGINPAD :  ");
+
 }
 
 
@@ -196,6 +198,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onRestart() {
         super.onRestart();
+
+      //  Log.d("INFO"," ON RESTART LOGGINPAD :  ");
 
     }
 

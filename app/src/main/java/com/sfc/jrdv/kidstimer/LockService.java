@@ -1,8 +1,10 @@
 package com.sfc.jrdv.kidstimer;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -28,6 +30,7 @@ import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;
@@ -70,10 +73,11 @@ public class LockService extends Service {
 
 
 
-    //PARA LAS 24 CON ScheduledExecutorService EN VEZ DE TIMER
+    //PARA LAS 24 CON ALARMAMANGER BROADCASTRECEIVER EN VEZ DE TIMER
 
-    ScheduledExecutorService scheduledExecutorService;
-
+    private BroadcastReceiver AlarmBrodCastReceiver;
+    private AlarmManager MiAlarmManager;
+    private PendingIntent pendingIntentAlarma;
 
 
 
@@ -85,11 +89,29 @@ public class LockService extends Service {
         Log.d("INFO","INICIADO onCreate EN SERVICE!!");
 
         // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
-        //NO CREO Q SEA NECESARIO LA TENRELO EN MANIFEST
+        //NO CREO Q SEA NECESARIO LA TENRELO EN MANIFEST!!!NO!!! SI LO QUITO NO FUNCIONA!!
+
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         BroadcastReceiver mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
+
+
+        //IDEM PARA LA ALARMA RECEIVER:
+
+        /*
+        IntentFilter filter2 = new IntentFilter("MiIntentAlarmaReseteoTimers");
+        AlarmBrodCastReceiver = new AlarmIntentReceiver();
+        registerReceiver(AlarmBrodCastReceiver, filter2);
+        */
+
+        //NO LO HAGO COMOM DICE EN TODOS LADDOS CON UN PWENDING INTENT:
+        //https://www.sitepoint.com/scheduling-background-tasks-android/
+
+        Intent alarma =new Intent(this,AlarmIntentReceiver.class);
+        pendingIntentAlarma=PendingIntent.getBroadcast(this,0,alarma,0);//1º 0=requestcode y 2º 0=flag
+
+
 
 
         mContext = this;
@@ -100,7 +122,7 @@ public class LockService extends Service {
 
 
         //emepezamos el timer de cada 24h at nidnight
-        startTimerNewDay();
+        startTimerNewDay2();
 
 
 
@@ -268,7 +290,7 @@ public class LockService extends Service {
             boolean screenOn = intent.getBooleanExtra("screen_state", false);
             if (!screenOn) {
                 // YOUR CODE
-               // Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
+                 Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
                 //reiniciamos el timercountdown
                 //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
@@ -355,11 +377,44 @@ public class LockService extends Service {
 
                 //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
 
-                timer.cancel();
+                if (timer!=null) {
+                    timer.cancel();
+                }
                 timer=null;
 
 
-                startTimerNewDay();
+                startTimerNewDay2();
+
+
+
+            }
+
+            //4ºchequeamos si es una alarmaMagerBrodacast
+
+            boolean AlarmaMagerBrodacast = intent.getBooleanExtra("Alarma_reseteo_timers", false);
+            if (AlarmaMagerBrodacast) {
+                //AlarmaReceiver de Broadcast recibida
+
+
+
+                //ESTO SERA LO QUE NOS LLAME DESDE EL BRODCASRECEIVER:AlarmIntentReceiver
+                //ASI QUE AQUI EJECUTAMOS EL RESTERO DE LOS TIMERS
+
+
+                Log.i("INFO", "ES UN NUEVO DIA!!!");
+
+                //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
+                CalcularNewDayTime4Play();
+
+
+                //si existe timer lo paramos
+                if (cdt!=null){
+                    cdt.cancel();
+                }
+
+
+                //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+                TimerTiempoJuegoIniciarOajustar();
 
 
 
@@ -536,7 +591,7 @@ public class LockService extends Service {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////24 h timer con scheduleEXECUTOR//////////////////////////////////////////////////////////
+//////////////////////////////////////////////24 h timer con AlarmManager Broadcast//////////////////////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -547,13 +602,13 @@ public class LockService extends Service {
         // Scheduling task at today : 00:00:22 PM
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 00);
-        calendar.set(Calendar.MINUTE, 00);
-        calendar.set(Calendar.SECOND, 22);
+        calendar.set(Calendar.MINUTE, 01);
+        calendar.set(Calendar.SECOND, 00);
 
         //este time es en el pasado por eso se ejecuta del tiron
         //asi que le añado 24 horas(1 DIA)
 
-        calendar.add(Calendar.DATE,1);
+        calendar.add(Calendar.DATE,1);//TODO VOLVER A PONER EN RELAIDAD
 
         Date time = calendar.getTime();
         long timeinMilisec=calendar.getTimeInMillis();
@@ -564,36 +619,47 @@ public class LockService extends Service {
         //  int period = 10000;//10secs
         int perioddia= 1000 * 60 * 60 * 24 * 1;//24h
 
-        //ScheduledExecutorService scheduler =  Executors.newSingleThreadScheduledExecutor();
 
-        scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        //primerom anualmos la alarma anterior si existe
 
-        scheduledExecutorService.scheduleAtFixedRate
-                (new Runnable() {
-                    public void run() {
-                        // call service
-
-                        //toastHandler.sendEmptyMessage(0);//TODO REEMPLZAR POR NOTIFICACION
-                        Log.i("INFO", "ES UN NUEVO DIA!!!");
-
-                        //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
-                        CalcularNewDayTime4Play();
+        if (MiAlarmManager!=null){
+            MiAlarmManager.cancel(pendingIntentAlarma);
+            Log.d("INFO"," ANULADA LA ALARMA ");
 
 
-                        //si existe timer lo paramos
-                        if (cdt!=null){
-                            cdt.cancel();
-                        }
+        }
 
 
-                        //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
-                        TimerTiempoJuegoIniciarOajustar();
+        //o  alo bestia!!!
 
+
+        Intent alarmIntent = new Intent(this, AlarmIntentReceiver.class);
+        pendingIntentAlarma = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        MiAlarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        MiAlarmManager.cancel(pendingIntentAlarma);
+        Log.d("INFO"," ANULADA LA ALARMA  A LO BESTIA!! ");
+
+
+         MiAlarmManager=(AlarmManager)  getSystemService(Context.ALARM_SERVICE);
+         MiAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, timeinMilisec, perioddia, pendingIntentAlarma);
 
 
 
-                    }
-                }, timeinMilisec, perioddia, TimeUnit.MILLISECONDS);
+/*
+
+     //   CHEQEUO FUNCIONA OK CADA 10 SEG!!:
+        int interval = 10000;
+
+        MiAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntentAlarma);
+
+
+*/
+
+        //SETEO LA ALARMA
+        //OJO AQUI NO SE VA A RECOGER LA LLMADA DE LA ALARMA SINO EN EL AlarmIntentReceiver.CLASS
+        //EN ELLA VAMOS A RELLAMAR A ESTE LOCKSERVICE CON UN EXTRA DE Alarma_reseteo_timers=TRUE
+        //Y EN ONSTRATCOMMAND LO FILTRAMOS Y ACTUAMOS EN CONSECUENCIA
+
 
     }
 
@@ -909,7 +975,7 @@ public void getTopactivitySinPermisos(){
     long seconds = TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar)%60;//el resto!!
 
 
-    Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
+    //Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
 
 
 
@@ -921,7 +987,7 @@ public void getTopactivitySinPermisos(){
           //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
 
-            if(minutes==22 &&  seconds==30 ){
+            if(minutes==5 &&  seconds==0 ){
 
                 //ponemo le dialog de aviso
 
