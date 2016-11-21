@@ -830,7 +830,6 @@ public void getTopactivitySinPermisos(){
 
   //  refreshNotifications("seconds remaining: " + tiempoTotalParaJugar / 1000);
 
-    Log.d("INFO"," TIMER quedan :  "+tiempoTotalParaJugar);
 
 
     refreshNotifications("REMAINIG TIME: " + hms);
@@ -903,29 +902,39 @@ public void getTopactivitySinPermisos(){
 
 
 
+        //al ser milisec es dificil piullarolo con un avalor exacto
+        //lo convertimos a segs
+
+    long minutes = TimeUnit.MILLISECONDS.toMinutes(tiempoTotalParaJugar);
+    long seconds = TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar)%60;//el resto!!
+
+
+    Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
 
 
 
 
-        // Provide the packagename(s) of apps here, you want to show password activity
+
+    // Provide the packagename(s) of apps here, you want to show password activity
         if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) || tiempoTotalParaJugar>=2000) {//TODO PONER TIEMPO A >=1000
 
           //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
             // Show Password Activity
 
+            if(minutes==22 &&  seconds==30 ){
+
+                //ponemo le dialog de aviso
+
+                Intent DialogIntent = new Intent(mContext, DialogActivity.class);
+                DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(DialogIntent);
+
+            }
 
         }
 
 
-        else if(tiempoTotalParaJugar<=(1000*60*43)){
 
-            //ponemo le dialog de aviso
-
-            Intent DialogIntent = new Intent(mContext, DialogActivity.class);
-            DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(DialogIntent);
-
-        }
 
 
         else {

@@ -74,7 +74,10 @@
             android:theme="@style/Theme.Transparent"></activity>
         //dialog activity
         <activity android:name=".DialogActivity"
-            android:theme="@android:style/Theme.Dialog" ></activity>
+
+            android:theme="@style/AppThemeDialog"
+            android:screenOrientation="portrait">
+           </activity>
     </application>
 
 </manifest>
