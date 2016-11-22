@@ -7,8 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -50,11 +52,37 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            // y ademas q vaya al loggingpad
+            //SOLO SI HACE MAS DE 1 MIN QUE SE METIO UN CODE, QUE VULEVA A PEDIRLO:
 
-            Intent lockIntent = new Intent(this, LoginPadActivity.class);
-            lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            this.startActivity(lockIntent);
+
+            //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+            Long lasttimeacertado=Myapplication.preferences.getLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, 1);
+
+            if ((lasttimeacertado+(60*1000))<System.currentTimeMillis() || (lasttimeacertado==1))
+            {
+
+                // y ademas q vaya al loggingpad
+
+                Intent lockIntent = new Intent(this, LoginPadActivity.class);
+                lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.startActivity(lockIntent);
+
+            }
+
+            else{
+
+                //TODO MOSTAR DIALOG AVISANDO ESPERAR 1 MIN
+
+                Log.d("INFO","ACERTASTE HACE MENOS DE 1 MIN");
+
+
+                Intent DialogIntent = new Intent(this, DialogYaAcertasteAesperar.class);
+                DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.startActivity(DialogIntent);
+            }
+
+
 
 
             // setContentView(R.layout.activity_main);//TODO quitar cunado no queramos probar ekl gewnerator

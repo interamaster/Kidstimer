@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:background="@android:color/white"
+    android:background="@android:color/darker_gray"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -10,14 +10,14 @@
 
     <ImageView
         android:id="@+id/img_icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/kids_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/prisoner_icon"
         android:layout_centerHorizontal="true"
         android:padding="5dp"/>
 
     <TextView
-        android:text="OK NOW ACCEPT THE ADMIN MANAGER TO BE ABLE TO WORK PROPERLY"
+        android:text="NOW ACCEPT THE ADMIN MANAGER TO BE ABLE TO WORK PROPERLY"
         android:id="@+id/dialogtext"
         android:textSize="20dp"
         android:layout_below="@id/img_icon"

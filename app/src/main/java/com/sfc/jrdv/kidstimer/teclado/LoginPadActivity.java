@@ -429,18 +429,34 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                     if (numerometido.equals(numeroClaveFinal30min))//TODO calcular numeo correcto
                     {
 
+
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
+
                         //hemos acertado siguiente:
                         ChequeaResultado("30min");
-                    }
+
+                     }
 
                     else if (numerometido.equals("0408") || numerometido.equals("1972"))  {
                         //numero especial fijo da 1 hora mas
 
+
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
+
                         ChequeaResultado("ESPECIAL");
+
 
                     }
                     else if (numerometido.equals(numeroClaveFinal15min))  {
                         //numero especial fijo da 1 hora mas
+
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
 
                         ChequeaResultado("15min");
 
@@ -450,6 +466,10 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                     else if (numerometido.equals(numeroClaveFinal1HORA))  {
                         //numero especial fijo da 1 hora mas
 
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
+
                         ChequeaResultado("1HORA");
 
                     }
@@ -457,12 +477,20 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                     else if (numerometido.equals(numeroClaveFinal3HORAS))  {
                         //numero especial fijo da 1 hora mas
 
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
+
                         ChequeaResultado("3HORAS");
 
                     }
 
                     else if (numerometido.equals(numeroClaveFinalCASTIGO))  {
                         //numero especial fijo da 1 hora mas
+
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
 
                         ChequeaResultado("CASTIGO");
 
@@ -536,6 +564,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
             //this.mLoginProgress.setVisibility(View.GONE);
             // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
           //  Log.e("INFO", "acertaste!!!!!");
+
 
 
 

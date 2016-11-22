@@ -23,14 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         //para hacerlo auto boot
         <receiver android:name=".BootCompletedIntentReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         //para detectar cambio hora
         <receiver android:name=".IntentoCambiarHoraIntentReceiver">
             <intent-filter>
@@ -38,7 +36,6 @@
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
-
         //para device admin
         <receiver
             android:name=".DeviceAdmin"
@@ -51,12 +48,8 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-
         //para alarma
-        <receiver android:name=".AlarmIntentReceiver">
-
-
-        </receiver>
+        <receiver android:name=".AlarmIntentReceiver"></receiver>
 
         <service
             android:name=".timerService"
@@ -80,14 +73,18 @@
         <activity
             android:name=".teclado.LoginPadActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Transparent"></activity>
-
+            android:theme="@style/Theme.Transparent" />
         //dialog activity
-        <activity android:name=".DialogActivity"
+        <activity
+            android:name=".DialogActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeDialog"></activity>
 
+        //otro dialog de ya acertaste
+        <activity android:name=".DialogYaAcertasteAesperar"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeDialog"
-            android:screenOrientation="portrait">
-           </activity>
+            ></activity>
     </application>
 
 </manifest>

@@ -272,6 +272,7 @@ public class LockService extends Service {
 
             String intentExtraTime = intent.getStringExtra(EXTRA_TIME);
 
+           // Log.d("INFO", "intent not null  onStartCommand EN SERVICE!!" + intent.getStringExtra(EXTRA_TIME));
 
             //sumamos ese tiempo extra: si se puede
             //SI ES UN CASTIGO EL EXTRA MESSAGE ES =1..ASI PONEMOS QUE QUEDEN SOLO 5 SECS
@@ -287,6 +288,18 @@ public class LockService extends Service {
                 }
 
                 tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
+
+
+                //si existe timer lo paramos
+                if (cdt != null) {
+                    cdt.cancel();
+                }
+
+
+                //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+                TimerTiempoJuegoIniciarOajustar();
+
+
             }
 
 

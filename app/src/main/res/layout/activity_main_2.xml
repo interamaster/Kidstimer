@@ -9,8 +9,6 @@
     android:alpha="0.6">
 
 
-
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -100,7 +98,6 @@
         </TableRow>
 
     </TableLayout>
-
 
 
 </LinearLayout>
