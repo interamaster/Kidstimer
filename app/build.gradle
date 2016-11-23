@@ -33,4 +33,10 @@ dependencies {
     //para redeondear imagen
 
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+
+    //para firebase notif
+    compile 'com.google.firebase:firebase-messaging:9.6.1'
 }
+
+// Add to the bottom of the file
+apply plugin: 'com.google.gms.google-services'

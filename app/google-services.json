@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "928115605953",
+    "firebase_url": "https://kids-timer-free.firebaseio.com",
+    "project_id": "kids-timer-free",
+    "storage_bucket": "kids-timer-free.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928115605953:android:85ce7b25c0ba22d6",
+        "android_client_info": {
+          "package_name": "com.sfc.jrdv.kidstimer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "928115605953-ngnftmij6o46flg7rio3k3nblpe1u5f9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM9cvLwZGTucveCjlv4RqbMU7e90oJ5Ms"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

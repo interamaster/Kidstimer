@@ -85,6 +85,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeDialog"
             ></activity>
+
+        //PARA EL FIREBASE NOTIFS
+        <service android:name=".firebase.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
