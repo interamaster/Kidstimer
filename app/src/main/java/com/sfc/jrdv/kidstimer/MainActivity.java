@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +14,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.sfc.jrdv.kidstimer.firebase.KIDS;
 import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,9 +32,30 @@ public class MainActivity extends AppCompatActivity {
     private DevicePolicyManager mDPM;
     private ComponentName mAdminName;
 
+
+    //para firebase guardar nombre niños
+    private DatabaseReference mDatabase;
+    public static  String FireBaseUID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        //firebase:
+
+        //En el arranque inicial de tu app, el SDK FCM genera un token de registro para la instancia de app cliente.
+        Log.d("FCM", "Instance ID: " + FirebaseInstanceId.getInstance().getToken());
+
+        //y lo guaradmos para poder enviar/recibir push
+        FireBaseUID=FirebaseInstanceId.getInstance().getToken();
+
+        //como puede ser que no tenga internewt o que falle se crea la class:MyFirebaseInstanceIdService
+        //que en su metodo:  onTokenRefresh actualziar el Kids en firebase!!!
+
+
+        //creamos la referencia
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -236,6 +260,22 @@ public class MainActivity extends AppCompatActivity {
                     //guaradsmo niño
 
                     Myapplication.preferences.edit().putString(Myapplication.PREF_NOmbre_Nino,nombreHijo).commit();
+
+
+                    //guardamos el niño en FireBase:
+
+
+                    KIDS newKid= new KIDS(FireBaseUID,nombreHijo);
+
+
+
+                    Log.d("INFO", "KIDS  CREADO en Main "+newKid.getKidName() +" con UID "+newKid.getFirebaseuid());
+
+
+                    //3º)creamos en la Database de FireBase el padre
+                    //con userid el nombre del padre:
+
+                    mDatabase.child("KIDS").child(newKid.getKidName()).setValue(newKid);
 
                     //empezamos
 

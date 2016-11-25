@@ -36,6 +36,10 @@ dependencies {
 
     //para firebase notif
     compile 'com.google.firebase:firebase-messaging:9.6.1'
+
+    //para firebase database gusradar nombre niños
+
+    compile 'com.google.firebase:firebase-database:9.6.1'
 }
 
 // Add to the bottom of the file
