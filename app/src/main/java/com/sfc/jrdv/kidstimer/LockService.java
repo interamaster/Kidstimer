@@ -83,6 +83,10 @@ public class LockService extends Service {
 
 
 
+
+    //para la repeticion cada seg
+
+    ScheduledExecutorService scheduler;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -231,6 +235,7 @@ public class LockService extends Service {
 
 
 
+
     }
 
 
@@ -293,6 +298,8 @@ public class LockService extends Service {
                 //si existe timer lo paramos
                 if (cdt != null) {
                     cdt.cancel();
+                    //y por seguridad lo anulamos
+                    cdt=null;
                 }
 
 
@@ -310,6 +317,8 @@ public class LockService extends Service {
                 //estamos arrancadno desde main!!! iniciamos el counter
                 if (cdt != null) {
                     cdt.cancel();
+                    //y por seguridad lo anulamos
+                    cdt=null;
                 }
 
                 //reakustamos el timer al encender pantalla
@@ -337,6 +346,8 @@ public class LockService extends Service {
                     //si existe timer lo paramos
                     if (cdt != null) {
                         cdt.cancel();
+                        //y por seguridad lo anulamos
+                        cdt=null;
                     }
 
                     //reakustamos el timer al encender pantalla
@@ -377,6 +388,8 @@ public class LockService extends Service {
                     //si existe timer lo paramos
                     if (cdt != null) {
                         cdt.cancel();
+                        //y por seguridad lo anulamos
+                        cdt=null;
                     }
                 }
 
@@ -446,6 +459,8 @@ public class LockService extends Service {
                     //si existe timer lo paramos
                     if (cdt != null) {
                         cdt.cancel();
+                        //y por seguridad lo anulamos
+                        cdt=null;
                     }
 
 
@@ -460,7 +475,9 @@ public class LockService extends Service {
 
 
         //inicamos la repeticion
-        scheduleMethod();
+        //NO !!!!!!:lo pongo en oncreate o se para y arranca cada vez que hay un nuevo intent(por ej apaagar pantalla)
+        //si lo pongo en oncreate no empieza!!!
+       scheduleMethod();
 
 
         return Service.START_STICKY;
@@ -539,13 +556,18 @@ public class LockService extends Service {
                 @Override
                 public void onTick(long millisUntilFinished) {
 
-                    //Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
+                   // Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
                     //update tiempoTotalParaJugar with the remaining time left
                     tiempoTotalParaJugar = millisUntilFinished;
+
+
 
                     if (!isScreenOn(mContext)){
                         // POR SEGURIDAD NOS ASEGUIRAMOS QEU SOLO FUNCIONE SI La PNATLLA ESTA ENCENDIDA
                         cdt.cancel();
+
+                        //y por seguridad lo anulamos
+                        cdt=null;
 
                         //y nos autollamamos..que solo empezara si realemnte esta encendida!!
 
@@ -628,6 +650,9 @@ public class LockService extends Service {
             //si existe timer lo paramos
             if (cdt!=null){
                 cdt.cancel();
+
+                //y por seguridad lo anulamos
+                cdt=null;
             }
 
 
@@ -749,6 +774,8 @@ public class LockService extends Service {
             //si existe timer lo paramos
             if (cdt != null) {
                 cdt.cancel();
+                //y por seguridad lo anulamos
+                cdt=null;
             }
 
 
@@ -843,7 +870,13 @@ public class LockService extends Service {
     private void scheduleMethod() {
 
 
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        //ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        //creamos una property emjor para deetctar si ya empezo o no
+        //PERO EL PROBLEMA REAL ES  QUE LOS Executors SE PARA CUNADO LA COU SE PONE EN REPOSO(EJ APGARA PANTALLA!!)
+
+
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -857,6 +890,8 @@ public class LockService extends Service {
 
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
+
+
     }
 
 
@@ -960,11 +995,28 @@ public void newgettopactivity(){
 
 public void getTopactivitySinPermisos(){
 
+    //ESTE METODO ESTA FUNCIONANDO SIMEPRE QUE EL SERVICE ESTE VIVO!!
+
+    //ASI Q CHEQUEAMOS LA PANTALLA Y EL CDT:
+
+    if (cdt==null ){
+
+       // Log.d("INFO","cdt es null!!");//FUNCIONA OK
+        //SI NO HAY CDT ES PORQUE ESTA APAGADA LA PANTALLA ?¿
+        if (isScreenOn(this)) {
+            //si l pantalla esta encendida el cdt no puiede ser null!!!
+            //lo reiniciamos
+
+            TimerTiempoJuegoIniciarOajustar();
+
+        }
+    }
+
 
 
     //VAMOS A CHEQEUAR ESTADO DE PANTALLA:
 
-    //Log.d("INFO","PANTALLA ON:"+ (isScreenOn(this)));//FUNCIONA OK
+   // Log.d("INFO","PANTALLA ON:"+ (isScreenOn(this)));//FUNCIONA OK
 
     //ACTUALIZAMOS LA NOTIFICACION
 
@@ -1099,9 +1151,13 @@ public void getTopactivitySinPermisos(){
     @Override
     public void onDestroy() {
 
-        cdt.cancel();
+
        // Log.i("INFO", "Timer cancelled");
         super.onDestroy();
+
+        cdt.cancel();
+        //y por seguridad lo anulamos
+        cdt=null;
 
 
         //para evitar que el user pueda para el proceso:
