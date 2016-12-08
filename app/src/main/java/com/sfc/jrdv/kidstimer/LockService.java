@@ -47,15 +47,18 @@ import java.util.concurrent.TimeUnit;
 
 public class LockService extends Service {
 
+    //YA NO US LOS APP NAME..BLOUE EN UANTO E ACABA EL TIEMPO
     //String CURRENT_PACKAGE_NAME = {your this app packagename};
-    private String CURRENT_PACKAGE_NAME ="com.sfc.jrdv.kidstimer";
-    private String PACKAGEMALDITO1="com.android.launcher";//el home screen de LL
-    private String lastAppPN = "";
-    boolean noDelay = false;
+  //  private String CURRENT_PACKAGE_NAME ="com.sfc.jrdv.kidstimer";
+  //  private String PACKAGEMALDITO1="com.android.launcher";//el home screen de LL
+  //  private String lastAppPN = "";
+  //  boolean noDelay = false;
+
+
     public static LockService instance;
 
    // private AndroidProcesses ProcessManager;
-    private String packageName;
+   // private String packageName;
 
     CountDownTimer cdt = null;
 
@@ -89,23 +92,12 @@ public class LockService extends Service {
     //para la repeticion cada seg
 
     ScheduledExecutorService scheduler;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
 
-
-        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ QUE SE ARRANCA
-        Handler handler2 = new Handler(Looper.getMainLooper());
-        handler2.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Toast.makeText(getApplicationContext(), "INICIADO onCreate EN SERVICE!!!", Toast.LENGTH_LONG).show();
-
-
-            }
-        });
 
 
         Log.d("INFO","INICIADO onCreate EN SERVICE!!");
@@ -272,24 +264,10 @@ public class LockService extends Service {
 
         Log.d("INFO","REINICIADO onStartCommand EN SERVICE!!");
 
-        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ AUE SE REINICIA
-
-        Handler handler2 = new Handler(Looper.getMainLooper());
-        handler2.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Toast.makeText(getApplicationContext(), "REINICIADO onStartCommand EN SERVICE!!", Toast.LENGTH_LONG).show();
-
-
-            }
-        });
 
 
 
-
-        CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
+       // CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
         // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
 
         instance = this;
@@ -375,7 +353,13 @@ public class LockService extends Service {
             if (intentExtra!=null &&intentExtra.equals("screen_state")) {
 
 
+
+
+
+
+
                 boolean screenOn = intent.getBooleanExtra("screen_state", true);
+
                 if (!screenOn) {
                     // YOUR CODE
                     Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
@@ -397,31 +381,14 @@ public class LockService extends Service {
                     TimerTiempoJuegoIniciarOajustar();
 
 
-            /*
-            //lo hacemos emjor llmando al metodo creado
-            cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
+                    //guardamos el EL TIEMPO EN Q SE ENCENDIO:
 
-                    Log.i("INFO", "Countdown seconds remaining: " + millisUntilFinished / 1000);
-                    //update tiempoTotalParaJugar with the remaining time left
-                    tiempoTotalParaJugar = millisUntilFinished;
+                    Myapplication.preferences.edit().putLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA,System.currentTimeMillis()).commit();
 
-                }
+                    //guardamos el timepo que quedaba cunado se encendio:
 
-                @Override
-                public void onFinish() {
+                    Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO,tiempoTotalParaJugar).commit();
 
-                    //  se acabo la tablet!!
-                    Log.i("INFO", "Timer finished");
-                }
-            };
-
-
-
-            cdt.start();
-
-            */
 
                 } else {
                     // YOUR CODE
@@ -433,6 +400,54 @@ public class LockService extends Service {
                         //y por seguridad lo anulamos
                         cdt=null;
                     }
+
+
+
+
+                    //chequeamos el tiempo que ha pasado:
+                    long tiempoenqueseencendiopantalla=  Myapplication.preferences.getLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA,0);
+
+                    long tiempoquequedabacaundoseencendiolapantalla= Myapplication.preferences.getLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO,0);
+
+                    long tiempoConpantallaEncendida=System.currentTimeMillis()-tiempoenqueseencendiopantalla;
+
+
+                   // Log.d("INFO 2","TIEMPO que quedaba cunado se encendio la pantalla: "+tiempoquequedabacaundoseencendiolapantalla);
+                  //  Log.d("INFO 2","TIEMPO que se encedio la pantalla : "+tiempoenqueseencendiopantalla);
+                  //  Log.d("INFO 2","TIEMPO PANTALLA ENCENDIA: "+tiempoConpantallaEncendida);
+
+
+                    if (tiempoenqueseencendiopantalla>1000 && tiempoquequedabacaundoseencendiolapantalla>3000){
+
+                        //es un a segurida por si falla la preferncia!!!
+
+                            //SI LA DIFERENCIA ENTRE EL TIMEPO QUE QUEDABA AL ENCENDER LA PANTALLA (tiempoquequedabacaundoseencendiolapantalla )
+                            //Y EL QUE QUEDA AHORA:tiempoTotalParaJugar
+                            //ES MENOR QUE LA DIFERENCIA ENTRE EL TIEMPO  LLEVA LA PANTALLA ENCENDIDA:tiempoConpantallaEncendida
+                            //ENTONCES CORRIGE:
+                        //OJO CON MARGEN DE ERROR DE 5 SEGS!!! O SALTARIA CASIS SIEMPRE
+
+                        if (((tiempoquequedabacaundoseencendiolapantalla-tiempoTotalParaJugar)-5000)>tiempoConpantallaEncendida){
+
+                            Log.d("INFO 2","TIEMPO corregido en intent de pantalla apagada de : "+tiempoTotalParaJugar);
+
+                            //CORREGIR!!!!
+                            tiempoTotalParaJugar=tiempoquequedabacaundoseencendiolapantalla-tiempoConpantallaEncendida;
+
+                            if (tiempoTotalParaJugar<1  ) tiempoTotalParaJugar=2000;//por seguridad para que no sea NEGATIVO!!
+
+
+                            Log.d("INFO 3","TIEMPO corregido en intent de pantalla apagada a new time: : "+tiempoTotalParaJugar);
+                            //guardamos el timepo restante
+
+                            Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
+
+
+
+                        }
+
+                    }
+
                 }
 
             }
@@ -538,7 +553,7 @@ public class LockService extends Service {
         //SI LA PANTALLA ESTA APAGADA..ESTO VUELVE
 
         if (isScreenOn(this)) {
-            Log.d("INFO","PANTALLA ON:"+ (isScreenOn(this)));//FUNCIONA OK
+            Log.d("INFO","PANTALLA ON EN  TimerTiempoJuegoIniciarOajustar:"+ (isScreenOn(this)));//FUNCIONA OK
             //ES UNA DOBLE SEGURIDAD PX A VECES SGIGUE CONTANTO AUN SIN USAR....
                 //solo se ejecuta si l apnatalla esta apagada
 
@@ -915,7 +930,7 @@ public class LockService extends Service {
         //ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
         //creamos una property emjor para deetctar si ya empezo o no
-        //PERO EL PROBLEMA REAL ES  QUE LOS Executors SE PARA CUNADO LA COU SE PONE EN REPOSO(EJ APGARA PANTALLA!!)
+        //PERO EL PROBLEMA REAL ES  QUE LOS Executors SE PARA CUANDO LA CPU SE PONE EN REPOSO(EJ APGARA PANTALLA!!)
 
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -965,13 +980,13 @@ public void gettopactivity() {
     }
 }
 
-
+/*
 public void newgettopactivity(){
-    /*
+
     //TODO ESTE METODO TAMBIEN FUNCIONA y SERIA MEJOR SI HUBIER UNA LISTA DE APS A BLOQUEAR:
    // http://stackoverflow.com/questions/36954701/how-to-display-lock-activity-quickly-when-user-click-on-another-installed-applic
 
-     */
+
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { //For versions less than lollipop
         ActivityManager am = ((ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE));
@@ -1012,6 +1027,8 @@ public void newgettopactivity(){
     }
 }
 
+ */
+
 
     /**
      * Is the screen of the device on.
@@ -1038,6 +1055,7 @@ public void newgettopactivity(){
 public void getTopactivitySinPermisos(){
 
     //ESTE METODO ESTA FUNCIONANDO SIMEPRE QUE EL SERVICE ESTE VIVO!!
+    //Y LA PANTLLA ENCENDIDA!!1O LA CPU ESTARA EN REPOSO Y EL EXECUTOR SE PARA!!
 
     //ASI Q CHEQUEAMOS LA PANTALLA Y EL CDT:
 
@@ -1074,7 +1092,65 @@ public void getTopactivitySinPermisos(){
     refreshNotifications("REMAINIG TIME: " + hms);
 
 
-        ActivityManager activityManager = (ActivityManager) getSystemService (Context.ACTIVITY_SERVICE);
+
+
+
+    //guardamos el tieMpo restante
+
+    Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
+
+
+
+
+    //al ser milisec es dificil piullarolo con un avalor exacto
+    //lo convertimos a segs
+
+    long minutes = TimeUnit.MILLISECONDS.toMinutes(tiempoTotalParaJugar);
+    long seconds = TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar)%60;//el resto!!
+
+
+    //Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
+
+
+
+
+    //PARA MEJORAR VAMOS A CHEQUEAR LA APP SOLO SI SE ACABO EL TIEMPO!!!
+
+
+
+    // Provide the packagename(s) of apps here, you want to show password activity
+    if ( tiempoTotalParaJugar>=2000) {//TODO PONER TIEMPO A >=1000
+
+        //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
+        // Show Password Activity
+
+        if(minutes==5 &&  seconds==0 ){
+
+            //ponemo le dialog de aviso
+
+            Intent DialogIntent = new Intent(mContext, DialogActivity.class);
+            DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(DialogIntent);
+
+        }
+
+    }
+
+/*
+
+//YA NO USO NADA DE LOS APP NAMES!!!
+    else  if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME))){
+
+        //no hace nada al estar en inicio del launcher o ya en kidstimer
+    }
+*/
+
+    else {
+
+        //SI NO YA NI CHEQUEO APP NI NADA .DEL TIRON A  BLOQUEAR!!
+
+/*
+    ActivityManager activityManager = (ActivityManager) getSystemService (Context.ACTIVITY_SERVICE);
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
         {
@@ -1103,17 +1179,6 @@ public void getTopactivitySinPermisos(){
             // Log.v("INFO currentapp: ", packageName);
             }
 
-            /*
-            List<AndroidAppProcess> processes2= AndroidProcesses.getRunningForegroundApps(getApplicationContext() );//esto da 2 apps en foreground ?¿?
-
-            //packageName =  AndroidProcesses.getRunningForegroundApps(getApplicationContext()).get(processes2.size()).getPackageName();
-
-            packageName=processes2.get(processes2.size()).getPackageName();
-
-
-          //  List<AndroidAppProcess> processes = AndroidProcesses.getRunningAppProcesses();//esto da too los procesos que haya  >20!!
-
-          */
 
           //  Log.v("INFO currentapp: ", packageName);
         }
@@ -1123,62 +1188,9 @@ public void getTopactivitySinPermisos(){
            // Log.v("INFO currentapp: ", packageName);
         }
 
+ */
 
 
-        //para poner 1 solo log con la ultima abierta:
-
-        if (!(lastAppPN.equals(packageName))) {
-            lastAppPN = packageName;
-          //  Log.v("INFO currentapp on get ", packageName);
-
-
-        }
-
-
-
-              //guardamos el timepo restante
-
-         Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
-
-
-
-
-        //al ser milisec es dificil piullarolo con un avalor exacto
-        //lo convertimos a segs
-
-    long minutes = TimeUnit.MILLISECONDS.toMinutes(tiempoTotalParaJugar);
-    long seconds = TimeUnit.MILLISECONDS.toSeconds(tiempoTotalParaJugar)%60;//el resto!!
-
-
-    //Log.d("INFO"," TIMER quedan :  "+minutes +" y "+seconds);
-
-
-
-
-
-    // Provide the packagename(s) of apps here, you want to show password activity
-        if ((lastAppPN.contains(PACKAGEMALDITO1) || lastAppPN.contains(CURRENT_PACKAGE_NAME)) || tiempoTotalParaJugar>=2000) {//TODO PONER TIEMPO A >=1000
-
-          //TODO quitar para ver logging ; Log.v("INFO NO SE BLOQUEARIA: ",  lastAppPN);
-            // Show Password Activity
-
-            if(minutes==5 &&  seconds==0 ){
-
-                //ponemo le dialog de aviso
-
-                Intent DialogIntent = new Intent(mContext, DialogActivity.class);
-                DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(DialogIntent);
-
-            }
-
-        }
-
-
-
-
-
-        else {
 
             Intent lockIntent = new Intent(mContext, LoginPadActivity.class);
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1207,33 +1219,11 @@ public void getTopactivitySinPermisos(){
         //para evitar que el user pueda para el proceso:
         //http://stackoverflow.com/questions/21550204/how-to-automatically-restart-a-service-even-if-user-force-close-it
 
-        sendBroadcast(new Intent("YouWillNeverKillMe"));
 
-
-
-        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ QUE SE destruye
-        Handler handler2 = new Handler(Looper.getMainLooper());
-        handler2.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Toast.makeText(getApplicationContext(), "DESTROYED EL  SERVICE!!!", Toast.LENGTH_LONG).show();
-
-
-            }
-        });
-
-
-        //ponemo le dialog de aviso
         //nunca se destruye!!!
-        /*
+        //guardamos el timepo restante
 
-        Intent DialogIntent = new Intent(mContext, DialogActivity.class);
-        DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(DialogIntent);
-
-        */
+        Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
     }
 
 
@@ -1300,20 +1290,6 @@ public void getTopactivitySinPermisos(){
         Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
 
 
-        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ QUE SE destruye
-        Handler handler2 = new Handler(Looper.getMainLooper());
-        handler2.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Toast.makeText(getApplicationContext(), "REMOVED FROM TASK EL  SERVICE!!!", Toast.LENGTH_LONG).show();
-
-
-            }
-        });
-
-        sendBroadcast(new Intent("IWillStartAuto"));
     }
 
 }

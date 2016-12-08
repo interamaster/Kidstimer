@@ -29,6 +29,8 @@ public class Myapplication extends Application {
     public static final String PREF_BOOL_NINOYAOK="NO";
     public static final String PREF_BOOL_INTENTO_CAMBIO_HORA="BoolCambioHora";
     public static final String PREF_ULTIMA_VEZ_METIO_CODE_OK="timeultimoacierto";
+    public static final String PREF_HORA_ENCENDIO_APAGOPANTALLA="horacambiopantala";
+    public static final String PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO="tiemporestantealencenderpantalla";
 
     @Override
     public void onCreate() {
