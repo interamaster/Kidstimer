@@ -28,8 +28,10 @@ import android.widget.Toast;
 import com.jaredrummler.android.processes.AndroidProcesses;
 import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
+import com.jaredrummler.android.processes.models.AndroidProcess;
 import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -90,6 +92,20 @@ public class LockService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
+        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ QUE SE ARRANCA
+        Handler handler2 = new Handler(Looper.getMainLooper());
+        handler2.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Toast.makeText(getApplicationContext(), "INICIADO onCreate EN SERVICE!!!", Toast.LENGTH_LONG).show();
+
+
+            }
+        });
 
 
         Log.d("INFO","INICIADO onCreate EN SERVICE!!");
@@ -256,6 +272,20 @@ public class LockService extends Service {
 
         Log.d("INFO","REINICIADO onStartCommand EN SERVICE!!");
 
+        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ AUE SE REINICIA
+
+        Handler handler2 = new Handler(Looper.getMainLooper());
+        handler2.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Toast.makeText(getApplicationContext(), "REINICIADO onStartCommand EN SERVICE!!", Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
 
 
 
@@ -263,6 +293,18 @@ public class LockService extends Service {
         // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
 
         instance = this;
+
+
+        if (intent==null){
+
+            //esto solo debe suceder al removeontask o al destroyed el service!!
+            //pero ninguno de los 2 metodos que lo deberian detectar o hace...
+
+            //asi que aqui del tiron:
+
+            TimerTiempoJuegoIniciarOajustar();
+
+        }
 
 
         if(intent!=null) {
@@ -1045,6 +1087,8 @@ public void getTopactivitySinPermisos(){
 
             List<AndroidAppProcess> processes2= AndroidProcesses.getRunningForegroundApps(getApplicationContext() );
 
+
+
             if (processes2.size()>0){
 
                 packageName =  AndroidProcesses.getRunningForegroundApps(getApplicationContext()).get((processes2.size()-1)).getPackageName();
@@ -1164,6 +1208,32 @@ public void getTopactivitySinPermisos(){
         //http://stackoverflow.com/questions/21550204/how-to-automatically-restart-a-service-even-if-user-force-close-it
 
         sendBroadcast(new Intent("YouWillNeverKillMe"));
+
+
+
+        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ QUE SE destruye
+        Handler handler2 = new Handler(Looper.getMainLooper());
+        handler2.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Toast.makeText(getApplicationContext(), "DESTROYED EL  SERVICE!!!", Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
+
+        //ponemo le dialog de aviso
+        //nunca se destruye!!!
+        /*
+
+        Intent DialogIntent = new Intent(mContext, DialogActivity.class);
+        DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(DialogIntent);
+
+        */
     }
 
 
@@ -1218,21 +1288,32 @@ public void getTopactivitySinPermisos(){
 
 
 
+
+    @Override
     public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
 
-        //unregister listeners
-        //do any other cleanup if required
 
-        //stop service
-        //stopSelf();
 
         //guardamos el timepo restante
 
         Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
 
 
+        //TODO QUITAR:SOLO PARA INFO VISUAL DE CADA VEZ QUE SE destruye
+        Handler handler2 = new Handler(Looper.getMainLooper());
+        handler2.post(new Runnable() {
 
-      //  Log.v("INFO  ",  "proceso parado y tiempo guardado!!!");
+            @Override
+            public void run() {
+
+                Toast.makeText(getApplicationContext(), "REMOVED FROM TASK EL  SERVICE!!!", Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
+        sendBroadcast(new Intent("IWillStartAuto"));
     }
 
 }
