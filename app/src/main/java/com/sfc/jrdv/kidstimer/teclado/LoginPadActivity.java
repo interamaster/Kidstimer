@@ -421,6 +421,11 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
                  //   Log.e("INFO","hemos llegado al nuemro maximo de 4 numeros");
 
+                    //generamos de nuevo el codigo!!!por si ha tradado mucho
+
+
+                    generaCodigoSecretosegunHora();
+
 
                     String numerometido=LoginPadActivity.this.mUserAccessCode.getText().toString();
 
@@ -533,6 +538,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                 ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(800);
 
                 speak("no");
+
+
 
             }
 
