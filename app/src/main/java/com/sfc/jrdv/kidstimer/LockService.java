@@ -470,7 +470,9 @@ public class LockService extends Service {
                         @Override
                         public void run() {
 
-                            Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+                          //  Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(getApplicationContext(), getString(R.string.cambiohoraaviso), Toast.LENGTH_LONG).show();
 
 
                         }
