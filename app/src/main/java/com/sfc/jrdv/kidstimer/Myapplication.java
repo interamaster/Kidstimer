@@ -2,7 +2,6 @@ package com.sfc.jrdv.kidstimer;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.ParcelUuid;
 
 /**
  * Created by joseramondelgado on 02/11/16.
@@ -31,6 +30,7 @@ public class Myapplication extends Application {
     public static final String PREF_ULTIMA_VEZ_METIO_CODE_OK="timeultimoacierto";
     public static final String PREF_HORA_ENCENDIO_APAGOPANTALLA="horacambiopantala";
     public static final String PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO="tiemporestantealencenderpantalla";
+    public static final String PREF_BOOL_USADOYA_CODE_EMERGENCIA="Boolemergecia";
 
     @Override
     public void onCreate() {

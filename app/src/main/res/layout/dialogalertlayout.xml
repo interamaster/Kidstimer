@@ -17,7 +17,7 @@
         android:padding="5dp"/>
 
     <TextView
-        android:text="NOW ACCEPT THE ADMIN MANAGER TO BE ABLE TO WORK PROPERLY"
+        android:text="@string/activaadministrator"
         android:id="@+id/dialogtext"
         android:textSize="20dp"
         android:layout_below="@id/img_icon"

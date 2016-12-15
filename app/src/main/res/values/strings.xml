@@ -17,4 +17,14 @@
     <string name="eight">8</string>
     <string name="nine">9</string>
     <string name="zero">0</string>
+
+
+
+    <string name="hint1">Enter Your Name (Max 8 characters)</string>
+    <string name="deletekeypad">Delete</string>
+    <string name="fiveminaviso">ONLY 5 MINUTES LEFT!!!</string>
+    <string name="emergencyaviso">USED EMERGENCY CODE,YOU HAVE 10  EXTRA MINUTES (TO UNISTALL APP IF YOU DO NOT LIKE IT)YOU WILL NOT HAVE ANY OTHER CHANCE TILL TOMORROW!!!</string>
+    <string name="waitoneminuteaviso">WAIT 1 MINUTE TO ENTER A NEW CODE!!!</string>
+    <string name="activaadministrator">NOW CLICK OK ON THE ADMIN MANAGER TO BE ABLE TO WORK PROPERLY</string>
+
 </resources>

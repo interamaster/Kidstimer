@@ -58,7 +58,7 @@
                 android:textColor="#ffffff"
                 android:textColorHint="#cccccc"
                 android:id="@+id/txtname_check_children"
-                android:hint="Enter Your Name (Max 8 characters)"
+                android:hint="@string/hint1"
                 android:drawablePadding="10dp"
                 android:drawableLeft="@drawable/boys_icon"
                 android:layout_below="@+id/txtname_reg"

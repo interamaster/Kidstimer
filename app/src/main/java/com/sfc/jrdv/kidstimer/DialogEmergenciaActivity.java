@@ -6,20 +6,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 
-public class DialogYaAcertasteAesperar extends AppCompatActivity {
+public class DialogEmergenciaActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dialog_ya_acertaste_aesperar);
+        setContentView(R.layout.activity_dialog_emergencia);
 
 
 
         AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.myDialog)).create();
         alertDialog.setTitle("ATTENTION!!");
-        //alertDialog.setMessage("WAIT 1 MINUTE TO ENTER A NEW CODE!!!");
+        //alertDialog.setMessage("USED EMERGENCY CODE,YOU HAVE 10  EXTRA MINUTES (TO UNISTALL APP IF YOU DO NOT LIKE IT)YOU WILL NOT HAVE ANY OTHER CHANCE TILL TOMORROW!!!");
         //segun idioma:
-        alertDialog.setMessage(getString(R.string.waitoneminuteaviso));
+        alertDialog.setMessage(getString(R.string.emergencyaviso));
         alertDialog.setIcon(R.drawable.timer_icono);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
@@ -30,6 +30,7 @@ public class DialogYaAcertasteAesperar extends AppCompatActivity {
                     }
                 });
         alertDialog.show();
+
 
     }
 }

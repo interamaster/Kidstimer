@@ -49,7 +49,7 @@
             </intent-filter>
         </receiver>
         //para alarma
-        <receiver android:name=".AlarmIntentReceiver"></receiver>
+        <receiver android:name=".AlarmIntentReceiver" />
 
         <service
             android:name=".timerService"
@@ -78,14 +78,16 @@
         <activity
             android:name=".DialogActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeDialog"></activity>
-
+            android:theme="@style/AppThemeDialog" />
         //otro dialog de ya acertaste
-        <activity android:name=".DialogYaAcertasteAesperar"
+        <activity
+            android:name=".DialogYaAcertasteAesperar"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeDialog"
-            ></activity>
-
+            android:theme="@style/AppThemeDialog" />
+        //OTRO DIALOG EMERGENCIA USADO
+        <activity android:name=".DialogEmergenciaActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeDialog" />
         //PARA EL FIREBASE NOTIFS
         <service android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
@@ -93,7 +95,6 @@
             </intent-filter>
         </service>
         //para el firebase guardar nombre niños
-
         <service
             android:name=".firebase.MyFirebaseInstanceIdService"
             android:exported="true">
@@ -101,6 +102,8 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+
 
     </application>
 

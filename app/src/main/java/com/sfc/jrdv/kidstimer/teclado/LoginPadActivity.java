@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.cardinalsolutions.android.arch.autowire.AndroidLayout;
 import com.cardinalsolutions.android.arch.autowire.AndroidView;
+import com.sfc.jrdv.kidstimer.DialogEmergenciaActivity;
 import com.sfc.jrdv.kidstimer.LockService;
 import com.sfc.jrdv.kidstimer.Myapplication;
 import com.sfc.jrdv.kidstimer.R;
@@ -456,6 +457,21 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 
                     }
+
+
+                    else if (numerometido.equals("0000"))  {
+                        //numero especial fijo da 1 hora mas
+
+
+                        //SI METIO UN CODIGO VALIDO PONEMOS UN LONG EN PREF PARA TENER QUE SEPERAR 60 SECS HASTA METER OTRO:
+
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_ULTIMA_VEZ_METIO_CODE_OK, System.currentTimeMillis()).commit();
+
+                        ChequeaResultado("URGENCIA");
+
+
+                    }
+
                     else if (numerometido.equals(numeroClaveFinal15min))  {
                         //numero especial fijo da 1 hora mas
 
@@ -690,6 +706,42 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 
             finish();
+
+        }
+
+        else if(chequeanum.equals("URGENCIA")){
+
+            //  Log.e("INFO", "acertaste ESPECIAL!!!!!");
+
+
+
+            //TODO genera 5 MIN MAS!!!!SOLO SI NO LO HABIAMOS METIDO HOY!!
+
+            boolean usadoYaemergencia=Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA, false);
+
+            if (!usadoYaemergencia) {
+                //ponemos el bool a true para que no se pueda usar mas hoy!!
+
+                Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA,true).commit();
+
+                //Si nunca antesa se metio le regalamos 10 min para desintalar
+
+                Intent intent = new Intent(this, LockService.class);
+                intent.putExtra(LockService.EXTRA_MESSAGE, "tu nuevo timepo sera de 1 hora   mas 10*60*1000=30000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+                intent.putExtra(LockService.EXTRA_TIME, "600000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+                startService(intent);
+
+
+
+                Log.d("INFO","USASTE EMERGENCIA CODE");
+
+
+                Intent DialogIntent = new Intent(this, DialogEmergenciaActivity.class);
+                DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.startActivity(DialogIntent);
+
+                finish();
+            }
 
         }
     }

@@ -258,7 +258,7 @@
 
                 android:textSize="@dimen/thirteen_dp"
                 android:textColor="@android:color/white"
-                android:text="BORRAR"
+                android:text="@string/deletekeypad"
                 android:tag="Thin"/>
 
 

@@ -524,6 +524,10 @@ public class LockService extends Service {
                     //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
                     TimerTiempoJuegoIniciarOajustar();
 
+                    //VOOLVEMOA A PERMITIR EL EMERGECNY CODE "0000"
+
+                    Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA,false).commit();
+
 
                 }
 

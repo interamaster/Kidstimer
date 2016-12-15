@@ -3,7 +3,7 @@ package com.sfc.jrdv.kidstimer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.provider.Settings;
 import android.util.Log;
 
 /**
@@ -21,9 +21,12 @@ public class IntentoCambiarHoraIntentReceiver extends BroadcastReceiver {
        int AutotimeesON= android.provider.Settings.Global.getInt(context.getContentResolver(), android.provider.Settings.Global.AUTO_TIME, 0);
         //0=OFF
         //1=ON
+        int AutotimeZONEesON= android.provider.Settings.Global.getInt(context.getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+        //0=OFF
+        //1=ON
 
 
-        if ("android.intent.action.TIME_SET".equals(intent.getAction() )&& AutotimeesON==0) {
+        if ("android.intent.action.TIME_SET".equals(intent.getAction() )&& AutotimeesON==0 && AutotimeZONEesON==0) {
             //PARA EVITAR FALSO TIME SET:
             //http://stackoverflow.com/questions/16684132/action-time-set-in-android-getting-called-many-times-without-changing-the-time-m
             //QUE SOLO LO EJECUTE SI EL AUTOTIME ESTA EN OFF!!!(=0)

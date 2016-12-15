@@ -16,7 +16,7 @@ public class DialogActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.myDialog)).create();
         alertDialog.setTitle("ATTENTION!!");
-        alertDialog.setMessage("ONLY 5 MINUTES LEFT!!!");
+        alertDialog.setMessage(getString(R.string.fiveminaviso));
         alertDialog.setIcon(R.drawable.timer_icono);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
