@@ -15,7 +15,12 @@ public class BootCompletedIntentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
             Intent pushIntent = new Intent(context, LockService.class);
-            pushIntent.putExtra(LockService.EXTRA_MESSAGE,"REBOOT");
+           // pushIntent.putExtra(LockService.EXTRA_MESSAGE,"REBOOT");
+            //EN VEZ DE ESE EXTRA que sea como si fuera un encender pantalla:
+            boolean screenOff=false;//la pantalla com si se cabara de encender!!
+            pushIntent.putExtra(LockService.EXTRA_MESSAGE,"screen_state");
+            pushIntent.putExtra("screen_state", screenOff);
+
             context.startService(pushIntent);
         }
     }
