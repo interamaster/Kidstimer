@@ -55,6 +55,10 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
 
 
+        //guaradsmo uidkid
+
+        Myapplication.preferences.edit().putString(Myapplication.PREF_UID_KID,token).commit();
+
 
 
         //si el nombre del niño es correcto(!=NO) lo guardamos/actualzaimos..si no lo hara en sucesivis arranques
@@ -62,6 +66,9 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         if (!ninoname.equals("NO")){
             Log.d(TAG, "KIDS  CREADO en onrefreshtoken"+newKid.getKidName() +" con UID "+newKid.getFirebaseuid());
             mDatabase.child("KIDS").child(newKid.getKidName()).setValue(newKid);
+
+
+
 
         }
 

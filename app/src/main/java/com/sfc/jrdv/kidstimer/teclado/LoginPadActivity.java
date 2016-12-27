@@ -113,6 +113,11 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
     private TextView MultiplicacionTextview ;
 
+    //textview nombre y pass niño
+
+    private TextView NombreKid4Generator;
+    private TextView PassKid4Generator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,14 +141,35 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         MultiplicacionTextview =(TextView)findViewById(R.id.preguntaMultiplicacion);
 
 
+
+
         String ninoname = Myapplication.preferences.getString(Myapplication.PREF_NOmbre_Nino,"NO");
 
 
         MultiplicacionTextview.setText("ENTER CODE "+ninoname);
 
-       // Log.d("INFO"," ON CREATE LOGGINPAD :  ");
+       // /////Log.d("INFO"," ON CREATE LOGGINPAD :  ");
 
-}
+
+        //text view nombrw y pass KIDSGENERATOR
+
+        NombreKid4Generator=(TextView)findViewById(R.id.info1kidname);
+        PassKid4Generator=(TextView)findViewById(R.id.info2kidpass);
+
+
+        String kiduid4pass = Myapplication.preferences.getString(Myapplication.PREF_UID_KID,"NO");
+
+        if (kiduid4pass.length() > 11) {
+
+
+            kiduid4pass = kiduid4pass.substring(0, 10);
+        }
+
+
+        NombreKid4Generator.setText("KIDSTIMER GENERATOR/REMOTE  NAME: "+ninoname);
+
+        PassKid4Generator.setText("KIDSTIMER REMOTE  PASSWORD: "+kiduid4pass);
+    }
 
 
 
@@ -160,13 +186,13 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
                     int result = textToSpeech.setLanguage(locale);
                     if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("TTS", "This Language is not supported");
+                        //////////Log.e("TTS", "This Language is not supported");
                     }
 
                     // speak(saludoInicial);//aqui on habla de tiron!!!
 
                 } else {
-                    Log.e("TTS", "Initilization Failed!");
+                    //////////Log.e("TTS", "Initilization Failed!");
                 }
             }
         });
@@ -200,7 +226,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     protected void onRestart() {
         super.onRestart();
 
-      //  Log.d("INFO"," ON RESTART LOGGINPAD :  ");
+      //  //////////Log.d("INFO"," ON RESTART LOGGINPAD :  ");
 
     }
 
@@ -216,21 +242,21 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         numeroClaveFinal15min=generaNumeroClave("15min");
 
-        Log.d("INFO","el numero secreto para 15 min "+ numeroClaveFinal15min);
+        //////////Log.d("INFO","el numero secreto para 15 min "+ numeroClaveFinal15min);
 
 
         numeroClaveFinal30min=generaNumeroClave("30min");
 
-         Log.d("INFO","el numero secreto para 30 min "+ numeroClaveFinal30min);
+         /////Log.d("INFO","el numero secreto para 30 min "+ numeroClaveFinal30min);
 
         numeroClaveFinal1HORA=generaNumeroClave("1HORA");
-        Log.d("INFO","el numero secreto para 1 HORA "+ numeroClaveFinal1HORA);
+        /////Log.d("INFO","el numero secreto para 1 HORA "+ numeroClaveFinal1HORA);
 
         numeroClaveFinal3HORAS=generaNumeroClave("3HORAS");
-        Log.d("INFO","el numero secreto para 3 HORAS "+ numeroClaveFinal3HORAS);
+        /////Log.d("INFO","el numero secreto para 3 HORAS "+ numeroClaveFinal3HORAS);
 
         numeroClaveFinalCASTIGO=generaNumeroClave("CASTIGO");
-        Log.d("INFO","el numero secreto para CASTIGO "+ numeroClaveFinalCASTIGO);
+        /////Log.d("INFO","el numero secreto para CASTIGO "+ numeroClaveFinalCASTIGO);
 
 
     }
@@ -245,10 +271,10 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         minutes=c.get(Calendar.MINUTE);
 
         String clave =String.format("%02d", Horas)+String.format("%02d", minutes);
-        Log.d("INFO","el numero secreto sin invertir es: "+ clave);
+        /////Log.d("INFO","el numero secreto sin invertir es: "+ clave);
 
         clave =new StringBuilder(clave).reverse().toString();
-        Log.d("INFO","el numero secreto YA INVERTIDO  es: "+ clave);
+        /////Log.d("INFO","el numero secreto YA INVERTIDO  es: "+ clave);
 
 
 
@@ -308,7 +334,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         clave =String.valueOf(numeroCalveFinalenInt);
 
 
-        Log.d("INFO","el numero secreto YA INVERTIDO  Y codificado con la suma es: "+ clave);
+        /////Log.d("INFO","el numero secreto YA INVERTIDO  Y codificado con la suma es: "+ clave);
 
         //probamos a recuperarlo
 
@@ -324,10 +350,10 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     private void decodenumfinalcontiempo(String clave,String timepo) {
 
         String numeroClaveCheck=String.format("%02d", Horas)+String.format("%02d", minutes);
-        // Log.d("INFO DECODE","el tiempo secreto sin invertir es: "+numeroClaveCheck);
+        // /////Log.d("INFO DECODE","el tiempo secreto sin invertir es: "+numeroClaveCheck);
 
         numeroClaveCheck=new StringBuilder(numeroClaveCheck).reverse().toString();
-        // Log.d("INFO DECODE","el tiempo secreto YA INVERTIDO  es: "+numeroClaveCheck);
+        // /////Log.d("INFO DECODE","el tiempo secreto YA INVERTIDO  es: "+numeroClaveCheck);
 
         int numeroasint=Integer.parseInt(numeroClaveCheck);
         if (numeroasint>2000){
@@ -371,7 +397,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         if (NumeroFinalDecode.equals(clave)){
 
-         //   Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ clave );
+         //   /////Log.d("INFO","CORRECTO el numero pasado es decodificado ok "+ clave );
 
         }
 
@@ -420,7 +446,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
             public void afterTextChanged(Editable editable) {
                 if (LoginPadActivity.this.mUserAccessCode.getText().length() == USER_PIN_MAX_CHAR) {
 
-                 //   Log.e("INFO","hemos llegado al nuemro maximo de 4 numeros");
+                 //   /////Log.e("INFO","hemos llegado al nuemro maximo de 4 numeros");
 
                     //generamos de nuevo el codigo!!!por si ha tradado mucho
 
@@ -586,7 +612,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
             //this.mLoginProgress.setVisibility(View.GONE);
             // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-          //  Log.e("INFO", "acertaste!!!!!");
+          //  /////Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -610,7 +636,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
             //this.mLoginProgress.setVisibility(View.GONE);
             // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-          //  Log.e("INFO", "acertaste!!!!!");
+          //  /////Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -631,7 +657,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //this.mLoginProgress.setVisibility(View.GONE);
         // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-      //  Log.e("INFO", "acertaste!!!!!");
+      //  /////Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -652,7 +678,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //this.mLoginProgress.setVisibility(View.GONE);
         // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-      //  Log.e("INFO", "acertaste!!!!!");
+      //  /////Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -672,7 +698,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
             //this.mLoginProgress.setVisibility(View.GONE);
             // this.mUserAccessCode.startAnimation(this.mAnimSlideOut);
-            //  Log.e("INFO", "acertaste!!!!!");
+            //  /////Log.e("INFO", "acertaste!!!!!");
 
 
 
@@ -691,7 +717,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         else if(chequeanum.equals("ESPECIAL")){
 
-          //  Log.e("INFO", "acertaste ESPECIAL!!!!!");
+          //  /////Log.e("INFO", "acertaste ESPECIAL!!!!!");
 
 
 
@@ -711,7 +737,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         else if(chequeanum.equals("URGENCIA")){
 
-            //  Log.e("INFO", "acertaste ESPECIAL!!!!!");
+            //  /////Log.e("INFO", "acertaste ESPECIAL!!!!!");
 
 
 
@@ -733,7 +759,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
 
 
-                Log.d("INFO","USASTE EMERGENCIA CODE");
+                /////Log.d("INFO","USASTE EMERGENCIA CODE");
 
 
                 Intent DialogIntent = new Intent(this, DialogEmergenciaActivity.class);

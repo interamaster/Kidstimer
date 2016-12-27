@@ -58,7 +58,7 @@
     <TableLayout
         android:id="@+id/activity_login_pad_table_layout"
         android:gravity="center"
-        android:paddingTop="20dp"
+        android:paddingTop="70dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
@@ -218,7 +218,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/eight_dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:id="@+id/lastfila">
             <TextView
                 android:id="@+id/nousao"
                 android:layout_width="@dimen/seventy_dp"
@@ -263,7 +264,34 @@
 
 
         </TableRow>
+        <TextView
+            android:id="@+id/info1kidname"
+            android:layout_below="@+id/lastfila"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KIDSTIMER GENERATOR/REMOTE  NAME: papi1234"
+            android:textColor="@android:color/white"
+            android:textSize="15dp"
+            android:tag="Medium"
+            android:gravity="bottom"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:id="@+id/info2kidpass"
+            android:layout_below="@+id/info1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KIDSTIMER REMOTE  PASSWORD: 1234567890"
+            android:textColor="@android:color/holo_green_light"
+            android:textSize="17dp"
+            android:tag="Medium"
+            android:gravity="bottom"
+            android:padding="10dp"
+            />
 
     </TableLayout>
+
+
 
 </RelativeLayout>
