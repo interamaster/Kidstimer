@@ -26,7 +26,9 @@ public class IntentoCambiarHoraIntentReceiver extends BroadcastReceiver {
         //1=ON
 
 
-        if ("android.intent.action.TIME_SET".equals(intent.getAction() )&& AutotimeesON==0 && AutotimeZONEesON==0) {
+
+
+        if ("android.intent.action.TIME_SET".equals(intent.getAction() )&&( AutotimeesON==0 || AutotimeZONEesON==0)) {
             //PARA EVITAR FALSO TIME SET:
             //http://stackoverflow.com/questions/16684132/action-time-set-in-android-getting-called-many-times-without-changing-the-time-m
             //QUE SOLO LO EJECUTE SI EL AUTOTIME ESTA EN OFF!!!(=0)
@@ -39,6 +41,9 @@ public class IntentoCambiarHoraIntentReceiver extends BroadcastReceiver {
             context.startService(pushIntent);
         }
 
+        //me centro solo enel cambio de dia
+        /*
+
 
         if ("android.intent.action.DATE_CHANGED".equals(intent.getAction())){
             //SI CAMBIA DE DIA ..DEL TIRON !!
@@ -49,6 +54,7 @@ public class IntentoCambiarHoraIntentReceiver extends BroadcastReceiver {
             pushIntent.putExtra("cambio_de_hora", CambioDeHora);
             pushIntent.putExtra(LockService.EXTRA_MESSAGE,"cambio_de_hora");
             context.startService(pushIntent);
-        }
+        }*/
     }
+
 }
