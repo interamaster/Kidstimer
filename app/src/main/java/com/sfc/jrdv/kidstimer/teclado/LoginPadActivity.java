@@ -124,6 +124,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_pad);
 
+        Log.d("INFO 2222","iiciado loginPad!!!");
+
            configureViews();
             //configureAnimations();
             setEditTextListener();
@@ -226,13 +228,18 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     protected void onRestart() {
         super.onRestart();
 
-      //  //////////Log.d("INFO"," ON RESTART LOGGINPAD :  ");
+      Log.d("INFO"," ON RESTART LOGGINPAD :  ");
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("INFO"," ON RESUME LOGGINPAD :  ");
+    }
 
 
-	private void generaCodigoSecretosegunHora(){
+    private void generaCodigoSecretosegunHora(){
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////30 MIN,1 HORA y 3 HORAS//////////////////////////////////////////////////////

@@ -73,6 +73,7 @@
         <activity
             android:name=".teclado.LoginPadActivity"
             android:screenOrientation="portrait"
+
             android:theme="@style/Theme.Transparent" />
         //dialog activity
         <activity

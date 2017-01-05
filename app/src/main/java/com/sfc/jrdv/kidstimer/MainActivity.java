@@ -1,6 +1,7 @@
 package com.sfc.jrdv.kidstimer;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -72,7 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
          //   Log.d("INFO","su nombre es "+ninoname);
 
-            StartServiceYa();
+           // StartServiceYa();
+
+            //en vez de arrancarlo comprobamo si ya esta runnnig!!
+
+            if (!isMyServiceRunning(LockService.class)){
+                StartServiceYa();
+            }
 
 
 
@@ -92,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(lockIntent);
 
+                finish();
+
             }
 
             else{
@@ -104,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent DialogIntent = new Intent(this, DialogYaAcertasteAesperar.class);
                 DialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(DialogIntent);
+
+                finish();
             }
 
 
@@ -174,6 +185,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     */
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////saber si mi service esat runnig/////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 
     public void startService(View view) {
         //SOLO SE UNSA SI SE PONE LE XML ORIGINAL DE PULSAR BOTON PARA INICAR SERVICE!!!

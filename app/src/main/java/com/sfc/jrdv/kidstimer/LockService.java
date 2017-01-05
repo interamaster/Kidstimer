@@ -93,10 +93,14 @@ public class LockService extends Service {
 
     ScheduledExecutorService scheduler;
 
+    //para saber si ya esta el sevivio running:
+    private boolean ServiceYaRunning;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+        ServiceYaRunning=false;
 
 
 
@@ -262,118 +266,83 @@ public class LockService extends Service {
         //ej leer el extra del intent:
 
 
-        Log.d("INFO","REINICIADO onStartCommand EN SERVICE!!");
 
 
+            Log.d("INFO", "REINICIADO onStartCommand EN SERVICE!!");
 
 
-       // CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
-        // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
+            // CURRENT_PACKAGE_NAME = getApplicationContext().getPackageName();
+            // Log.e("Current PN", "" + CURRENT_PACKAGE_NAME);
 
-        instance = this;
-
-
-        if (intent==null){
-
-            //esto solo debe suceder al removeontask o al destroyed el service!!
-            //pero ninguno de los 2 metodos que lo deberian detectar o hace...
-
-            //asi que aqui del tiron:
-
-            TimerTiempoJuegoIniciarOajustar();
-
-        }
+            instance = this;
 
 
-        if(intent!=null) {
+            if (intent == null) {
 
+                //esto solo debe suceder al removeontask o al destroyed el service!!
+                //pero ninguno de los 2 metodos que lo deberian detectar o hace...
 
-            Log.d("INFO", "intent not null  onStartCommand EN SERVICE!!" + intent.getStringExtra(EXTRA_MESSAGE));
+                //asi que aqui del tiron:
 
-            //1º)sacamos los valores de EXTRA_TIME y EXTRA_MSG
-
-            String intentExtra = intent.getStringExtra(EXTRA_MESSAGE);
-            //  Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
-
-            String intentExtraTime = intent.getStringExtra(EXTRA_TIME);
-
-           // Log.d("INFO", "intent not null  onStartCommand EN SERVICE!!" + intent.getStringExtra(EXTRA_TIME));
-
-            //sumamos ese tiempo extra: si se puede
-            //SI ES UN CASTIGO EL EXTRA MESSAGE ES =1..ASI PONEMOS QUE QUEDEN SOLO 5 SECS
-
-            if (intentExtraTime != null) {
-
-
-                if (intentExtraTime.equals("1")) {
-                    //EL EXTRA ES 1..OSEA CASTIGO
-
-                    tiempoTotalParaJugar = 5000;
-
-                }
-
-                tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
-
-
-                //si existe timer lo paramos
-                if (cdt != null) {
-                    cdt.cancel();
-                    //y por seguridad lo anulamos
-                    cdt=null;
-                }
-
-
-                //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
                 TimerTiempoJuegoIniciarOajustar();
-
 
             }
 
 
-            if (intentExtra!=null &&intentExtra.equals("DesdeMain")) {
-
-                //  Log.d("INFO","intent  DESDEMAIN onStartCommand EN SERVICE!!" );
-
-                //estamos arrancadno desde main!!! iniciamos el counter
-                if (cdt != null) {
-                    cdt.cancel();
-                    //y por seguridad lo anulamos
-                    cdt=null;
-                }
-
-                //reakustamos el timer al encender pantalla
-
-                TimerTiempoJuegoIniciarOajustar();
+            if (intent != null) {
 
 
-            }
+                Log.d("INFO", "intent not null  onStartCommand EN SERVICE!!" + intent.getStringExtra(EXTRA_MESSAGE));
+
+                //1º)sacamos los valores de EXTRA_TIME y EXTRA_MSG
+
+                String intentExtra = intent.getStringExtra(EXTRA_MESSAGE);
+                //  Log.v("TASK","El mensaje recibido en LockService es un timepo extra de: "+ intentExtra);
+
+                String intentExtraTime = intent.getStringExtra(EXTRA_TIME);
+
+                // Log.d("INFO", "intent not null  onStartCommand EN SERVICE!!" + intent.getStringExtra(EXTRA_TIME));
+
+                //sumamos ese tiempo extra: si se puede
+                //SI ES UN CASTIGO EL EXTRA MESSAGE ES =1..ASI PONEMOS QUE QUEDEN SOLO 5 SECS
+
+                if (intentExtraTime != null) {
 
 
-            //2º)chequeamos si es un intent de pantalla
-            if (intentExtra!=null &&intentExtra.equals("screen_state")) {
+                    if (intentExtraTime.equals("1")) {
+                        //EL EXTRA ES 1..OSEA CASTIGO
 
+                        tiempoTotalParaJugar = 5000;
 
+                    }
 
+                    tiempoTotalParaJugar = tiempoTotalParaJugar + Integer.valueOf(intentExtraTime);
 
-
-
-
-                boolean screenOn = intent.getBooleanExtra("screen_state", true);
-
-                if (!screenOn) {
-                    // YOUR CODE
-                    Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
-
-                    //reiniciamos el timercountdown
-                    //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
-
-                    //  Log.i("INFO", "Restarting  timer...");
 
                     //si existe timer lo paramos
                     if (cdt != null) {
                         cdt.cancel();
                         //y por seguridad lo anulamos
-                        cdt=null;
+                        cdt = null;
+                    }
+
+
+                    //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+                    TimerTiempoJuegoIniciarOajustar();
+
+
+                }
+
+
+                if (intentExtra != null && intentExtra.equals("DesdeMain")) {
+
+                    //  Log.d("INFO","intent  DESDEMAIN onStartCommand EN SERVICE!!" );
+
+                    //estamos arrancadno desde main!!! iniciamos el counter
+                    if (cdt != null) {
+                        cdt.cancel();
+                        //y por seguridad lo anulamos
+                        cdt = null;
                     }
 
                     //reakustamos el timer al encender pantalla
@@ -381,170 +350,198 @@ public class LockService extends Service {
                     TimerTiempoJuegoIniciarOajustar();
 
 
-                    //guardamos el EL TIEMPO EN Q SE ENCENDIO:
-
-                    Myapplication.preferences.edit().putLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA,System.currentTimeMillis()).commit();
-
-                    //guardamos el timepo que quedaba cunado se encendio:
-
-                    Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO,tiempoTotalParaJugar).commit();
+                }
 
 
-                } else {
-                    // YOUR CODE
-                    Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
-
-                    //si existe timer lo paramos
-                    if (cdt != null) {
-                        cdt.cancel();
-                        //y por seguridad lo anulamos
-                        cdt=null;
-                    }
+                //2º)chequeamos si es un intent de pantalla
+                if (intentExtra != null && intentExtra.equals("screen_state")) {
 
 
+                    boolean screenOn = intent.getBooleanExtra("screen_state", true);
+
+                    if (!screenOn) {
+                        // YOUR CODE
+                        Log.e("PANTALLA ENCENDIDA ", String.valueOf(screenOn));
+
+                        //reiniciamos el timercountdown
+                        //al encendr la pnatlla reinicimaos  el timer con el timepo que queda
+
+                        //  Log.i("INFO", "Restarting  timer...");
+
+                        //si existe timer lo paramos
+                        if (cdt != null) {
+                            cdt.cancel();
+                            //y por seguridad lo anulamos
+                            cdt = null;
+                        }
+
+                        //reakustamos el timer al encender pantalla
+
+                        TimerTiempoJuegoIniciarOajustar();
 
 
-                    //chequeamos el tiempo que ha pasado:
-                    long tiempoenqueseencendiopantalla=  Myapplication.preferences.getLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA,0);
+                        //guardamos el EL TIEMPO EN Q SE ENCENDIO:
 
-                    long tiempoquequedabacaundoseencendiolapantalla= Myapplication.preferences.getLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO,0);
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA, System.currentTimeMillis()).commit();
 
-                    long tiempoConpantallaEncendida=System.currentTimeMillis()-tiempoenqueseencendiopantalla;
+                        //guardamos el timepo que quedaba cunado se encendio:
 
-
-                   // Log.d("INFO 2","TIEMPO que quedaba cunado se encendio la pantalla: "+tiempoquequedabacaundoseencendiolapantalla);
-                  //  Log.d("INFO 2","TIEMPO que se encedio la pantalla : "+tiempoenqueseencendiopantalla);
-                  //  Log.d("INFO 2","TIEMPO PANTALLA ENCENDIA: "+tiempoConpantallaEncendida);
+                        Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, tiempoTotalParaJugar).commit();
 
 
-                    if (tiempoenqueseencendiopantalla>1000 && tiempoquequedabacaundoseencendiolapantalla>3000){
+                    } else {
+                        // YOUR CODE
+                        Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
-                        //es un a segurida por si falla la preferncia!!!
+                        //si existe timer lo paramos
+                        if (cdt != null) {
+                            cdt.cancel();
+                            //y por seguridad lo anulamos
+                            cdt = null;
+                        }
+
+
+                        //chequeamos el tiempo que ha pasado:
+                        long tiempoenqueseencendiopantalla = Myapplication.preferences.getLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA, 0);
+
+                        long tiempoquequedabacaundoseencendiolapantalla = Myapplication.preferences.getLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, 0);
+
+                        long tiempoConpantallaEncendida = System.currentTimeMillis() - tiempoenqueseencendiopantalla;
+
+
+                        // Log.d("INFO 2","TIEMPO que quedaba cunado se encendio la pantalla: "+tiempoquequedabacaundoseencendiolapantalla);
+                        //  Log.d("INFO 2","TIEMPO que se encedio la pantalla : "+tiempoenqueseencendiopantalla);
+                        //  Log.d("INFO 2","TIEMPO PANTALLA ENCENDIA: "+tiempoConpantallaEncendida);
+
+
+                        if (tiempoenqueseencendiopantalla > 1000 && tiempoquequedabacaundoseencendiolapantalla > 3000) {
+
+                            //es un a segurida por si falla la preferncia!!!
 
                             //SI LA DIFERENCIA ENTRE EL TIMEPO QUE QUEDABA AL ENCENDER LA PANTALLA (tiempoquequedabacaundoseencendiolapantalla )
                             //Y EL QUE QUEDA AHORA:tiempoTotalParaJugar
                             //ES MENOR QUE LA DIFERENCIA ENTRE EL TIEMPO  LLEVA LA PANTALLA ENCENDIDA:tiempoConpantallaEncendida
                             //ENTONCES CORRIGE:
-                        //OJO CON MARGEN DE ERROR DE 5 SEGS!!! O SALTARIA CASIS SIEMPRE
+                            //OJO CON MARGEN DE ERROR DE 5 SEGS!!! O SALTARIA CASIS SIEMPRE
 
-                        if (((tiempoquequedabacaundoseencendiolapantalla-tiempoTotalParaJugar)-5000)>tiempoConpantallaEncendida){
+                            if (((tiempoquequedabacaundoseencendiolapantalla - tiempoTotalParaJugar) - 5000) > tiempoConpantallaEncendida) {
 
-                            Log.d("INFO 2","TIEMPO corregido en intent de pantalla apagada de : "+tiempoTotalParaJugar);
+                                Log.d("INFO 2", "TIEMPO corregido en intent de pantalla apagada de : " + tiempoTotalParaJugar);
 
-                            //CORREGIR!!!!
-                            tiempoTotalParaJugar=tiempoquequedabacaundoseencendiolapantalla-tiempoConpantallaEncendida;
+                                //CORREGIR!!!!
+                                tiempoTotalParaJugar = tiempoquequedabacaundoseencendiolapantalla - tiempoConpantallaEncendida;
 
-                            if (tiempoTotalParaJugar<1  ) tiempoTotalParaJugar=2000;//por seguridad para que no sea NEGATIVO!!
-
-
-                            Log.d("INFO 3","TIEMPO corregido en intent de pantalla apagada a new time: : "+tiempoTotalParaJugar);
-                            //guardamos el timepo restante
-
-                            Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante,tiempoTotalParaJugar).commit();
+                                if (tiempoTotalParaJugar < 1)
+                                    tiempoTotalParaJugar = 2000;//por seguridad para que no sea NEGATIVO!!
 
 
+                                Log.d("INFO 3", "TIEMPO corregido en intent de pantalla apagada a new time: : " + tiempoTotalParaJugar);
+                                //guardamos el timepo restante
 
-                        }
-
-                    }
-
-                }
-
-            }
-            //3º)chequeamos si es una de intento de cambio de hora
-
-            if (intentExtra!=null && intentExtra.equals("cambio_de_hora")) {
-
-                boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
-                if (intento_CambioHora) {
-                    //intewnto cambiar hora
+                                Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante, tiempoTotalParaJugar).commit();
 
 
-                    //toastHandler.sendEmptyMessage(0);//asi simempre pone "test"..npi =¿?=¿
-                    //lo hago mejor asi
-
-
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-
-                        @Override
-                        public void run() {
-
-                          //  Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
-
-                            Toast.makeText(getApplicationContext(), getString(R.string.cambiohoraaviso), Toast.LENGTH_LONG).show();
-
+                            }
 
                         }
-                    });
-                    //poenmos a true le intento
 
-
-                    Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true).commit();
-
-
-                    //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
-
-                    if (timer != null) {
-                        timer.cancel();
                     }
-                    timer = null;
+
+                }
+                //3º)chequeamos si es una de intento de cambio de hora
+
+                if (intentExtra != null && intentExtra.equals("cambio_de_hora")) {
+
+                    boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
+                    if (intento_CambioHora) {
+                        //intewnto cambiar hora
 
 
-                    startTimerNewDay2();
+                        //toastHandler.sendEmptyMessage(0);//asi simempre pone "test"..npi =¿?=¿
+                        //lo hago mejor asi
 
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                //  Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+
+                                Toast.makeText(getApplicationContext(), getString(R.string.cambiohoraaviso), Toast.LENGTH_LONG).show();
+
+
+                            }
+                        });
+                        //poenmos a true le intento
+
+
+                        Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true).commit();
+
+
+                        //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
+
+                        if (timer != null) {
+                            timer.cancel();
+                        }
+                        timer = null;
+
+
+                        startTimerNewDay2();
+
+
+                    }
+                }
+
+                //4ºchequeamos si es una alarmaMagerBrodacast
+
+                if (intentExtra != null && intentExtra.equals("Alarma_reseteo_timers")) {
+                    boolean AlarmaMagerBrodacast = intent.getBooleanExtra("Alarma_reseteo_timers", false);
+                    if (AlarmaMagerBrodacast) {
+                        //AlarmaReceiver de Broadcast recibida
+
+
+                        //ESTO SERA LO QUE NOS LLAME DESDE EL BRODCASRECEIVER:AlarmIntentReceiver
+                        //ASI QUE AQUI EJECUTAMOS EL RESTERO DE LOS TIMERS
+
+
+                        Log.i("INFO", "ES UN NUEVO DIA!!!");
+
+                        //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
+                        CalcularNewDayTime4Play();
+
+
+                        //si existe timer lo paramos
+                        if (cdt != null) {
+                            cdt.cancel();
+                            //y por seguridad lo anulamos
+                            cdt = null;
+                        }
+
+
+                        //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
+                        TimerTiempoJuegoIniciarOajustar();
+
+                        //VOOLVEMOA A PERMITIR EL EMERGECNY CODE "0000"
+
+                        Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA, false).commit();
+
+
+                    }
 
                 }
             }
 
-            //4ºchequeamos si es una alarmaMagerBrodacast
 
-            if (intentExtra!=null && intentExtra.equals("Alarma_reseteo_timers")) {
-                boolean AlarmaMagerBrodacast = intent.getBooleanExtra("Alarma_reseteo_timers", false);
-                if (AlarmaMagerBrodacast) {
-                    //AlarmaReceiver de Broadcast recibida
-
-
-                    //ESTO SERA LO QUE NOS LLAME DESDE EL BRODCASRECEIVER:AlarmIntentReceiver
-                    //ASI QUE AQUI EJECUTAMOS EL RESTERO DE LOS TIMERS
+            //inicamos la repeticion
+            //NO !!!!!!:lo pongo en oncreate o se para y arranca cada vez que hay un nuevo intent(por ej apaagar pantalla)
+            //si lo pongo en oncreate no empieza!!!
+            scheduleMethod();
 
 
-                    Log.i("INFO", "ES UN NUEVO DIA!!!");
-
-                    //TODO son las 12 de la noche dependidno del dia el valor del tiempototalJugar
-                    CalcularNewDayTime4Play();
-
-
-                    //si existe timer lo paramos
-                    if (cdt != null) {
-                        cdt.cancel();
-                        //y por seguridad lo anulamos
-                        cdt=null;
-                    }
-
-
-                    //UNA VEZ AJUSTADO EL TIMEPO NUEVO, QUE SE REAJUSTE EL TIMER!!:
-                    TimerTiempoJuegoIniciarOajustar();
-
-                    //VOOLVEMOA A PERMITIR EL EMERGECNY CODE "0000"
-
-                    Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA,false).commit();
-
-
-                }
-
-            }
+            return Service.START_STICKY;
         }
-
-
-        //inicamos la repeticion
-        //NO !!!!!!:lo pongo en oncreate o se para y arranca cada vez que hay un nuevo intent(por ej apaagar pantalla)
-        //si lo pongo en oncreate no empieza!!!
-       scheduleMethod();
-
-
-        return Service.START_STICKY;
-    }
 
 
 
@@ -1200,6 +1197,14 @@ public void getTopactivitySinPermisos(){
 
             Intent lockIntent = new Intent(mContext, LoginPadActivity.class);
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        /*
+        public static final int FLAG_ACTIVITY_SINGLE_TOP = 536870912
+        If set, the activity will not be launched if it is already running at the top of the history stack.
+         */
+        //http://stackoverflow.com/questions/8077728/how-to-prevent-the-activity-from-loading-twice-on-pressing-the-button
+            //lockIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //asi se esat simepre ejecuatnfo el onresume y onstop del loginpad!!!lo dejamos como eataba..no es de esto
+
             mContext.startActivity(lockIntent);
 
         }
