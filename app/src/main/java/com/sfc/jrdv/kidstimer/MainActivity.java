@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //los unimos en un string:
 
-                    String fechaaltaKid=String.valueOf(year)+String.valueOf(mes)+String.valueOf(dia)+String.valueOf(hours)+String.valueOf(minutes);
+                    String fechaaltaKid=String.valueOf(year)+"-"+String.valueOf(mes)+"-"+String.valueOf(dia)+"-"+String.valueOf(hours)+"-"+String.valueOf(minutes);
 
 
                     //guardamos el niño en FireBase:
