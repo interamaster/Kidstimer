@@ -453,7 +453,16 @@ public class LockService extends Service {
                 if (intentExtra != null && intentExtra.equals("cambio_de_hora")) {
 
                     boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
-                    if (intento_CambioHora) {
+
+                    //chequeamos el tiempo que ha pasado:
+                    long tiempoenqueseencendiopantalla = Myapplication.preferences.getLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA, 0);
+                    long tiempoConpantallaEncendida = System.currentTimeMillis() - tiempoenqueseencendiopantalla;
+                    Log.d("INFO","detectaado cambio de hora en onstarcommnad de timepo:"+tiempoConpantallaEncendida);
+
+                    //solo si la variacion de es de mas de 25 min!!!(5*60*1000)
+                    //o es negativo!!1(hay para atras!!)
+
+                    if ((intento_CambioHora && tiempoConpantallaEncendida>25*60*1000) || tiempoConpantallaEncendida<25*60*1000) {
                         //intewnto cambiar hora
 
 

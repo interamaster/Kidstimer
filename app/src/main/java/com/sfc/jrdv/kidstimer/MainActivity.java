@@ -21,6 +21,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.sfc.jrdv.kidstimer.firebase.KIDS;
 import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -292,7 +294,29 @@ public class MainActivity extends AppCompatActivity {
                     //guardamos el niño en FireBase:
 
 
-                    KIDS newKid= new KIDS(FireBaseUID,nombreHijo);
+                    //KIDS newKid= new KIDS(FireBaseUID,nombreHijo);
+
+                    //pero aparte delk nombre que le de vamos a añadir el año/mes/dia/hora/min para que si otro se llama igual no se cmbie en FB!!!
+
+                    long millis=System.currentTimeMillis();
+                    Calendar c=Calendar.getInstance();
+                    c.setTimeInMillis(millis);
+
+                    int year=c.get(Calendar.YEAR);
+                    int mes=c.get(Calendar.MONTH);
+                    int dia=c.get(Calendar.DAY_OF_MONTH);
+                    int hours=c.get(Calendar.HOUR);
+                    int minutes=c.get(Calendar.MINUTE);
+
+                    //los unimos en un string:
+
+                    String fechaaltaKid=String.valueOf(year)+String.valueOf(mes)+String.valueOf(dia)+String.valueOf(hours)+String.valueOf(minutes);
+
+
+                    //guardamos el niño en FireBase:
+
+
+                    KIDS newKid= new KIDS(FireBaseUID,nombreHijo+fechaaltaKid);
 
 
 
