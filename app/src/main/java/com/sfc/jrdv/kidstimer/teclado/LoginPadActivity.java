@@ -249,7 +249,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         numeroClaveFinal15min=generaNumeroClave("15min");
 
-        //////////Log.d("INFO","el numero secreto para 15 min "+ numeroClaveFinal15min);
+        /////Log.d("INFO","el numero secreto para 15 min "+ numeroClaveFinal15min);
 
 
         numeroClaveFinal30min=generaNumeroClave("30min");
@@ -263,7 +263,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         /////Log.d("INFO","el numero secreto para 3 HORAS "+ numeroClaveFinal3HORAS);
 
         numeroClaveFinalCASTIGO=generaNumeroClave("CASTIGO");
-        /////Log.d("INFO","el numero secreto para CASTIGO "+ numeroClaveFinalCASTIGO);
+        //////Log.d("INFO","el numero secreto para CASTIGO "+ numeroClaveFinalCASTIGO);
 
 
     }
