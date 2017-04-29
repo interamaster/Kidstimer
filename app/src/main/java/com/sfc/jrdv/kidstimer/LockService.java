@@ -388,69 +388,135 @@ public class LockService extends Service {
 
                         Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, tiempoTotalParaJugar).commit();
 
+                        //new abril 17
+                        //CHEQEUAMOS SI HUBO UN CAMBIO DE HORA LA ULTIMA VEZ
 
-                    } else {
-                        // YOUR CODE
-                        Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
+                        Boolean inetentocambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true);
 
-                        //si existe timer lo paramos
-                        if (cdt != null) {
-                            cdt.cancel();
-                            //y por seguridad lo anulamos
-                            cdt = null;
+
+                        if (inetentocambioHora) {
+
+                            //annulamos el aviso
+                            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, false).commit();
+
+
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    //  Toast.makeText(getApplicationContext(), "DUE TO CHANGE TIME CHEAT,YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)", Toast.LENGTH_LONG).show();
+
+                                    Toast.makeText(getApplicationContext(), getString(R.string.cambiohoraaviso), Toast.LENGTH_LONG).show();
+
+
+                                }
+                            });
+
                         }
 
+                        } else {
+                            // YOUR CODE
+                            Log.e("PANTALLA APAGADA ", String.valueOf(screenOn));
 
-                        //chequeamos el tiempo que ha pasado:
-                        long tiempoenqueseencendiopantalla = Myapplication.preferences.getLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA, 0);
-
-                        long tiempoquequedabacaundoseencendiolapantalla = Myapplication.preferences.getLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, 0);
-
-                        long tiempoConpantallaEncendida = System.currentTimeMillis() - tiempoenqueseencendiopantalla;
-
-
-                        // Log.d("INFO 2","TIEMPO que quedaba cunado se encendio la pantalla: "+tiempoquequedabacaundoseencendiolapantalla);
-                        //  Log.d("INFO 2","TIEMPO que se encedio la pantalla : "+tiempoenqueseencendiopantalla);
-                        //  Log.d("INFO 2","TIEMPO PANTALLA ENCENDIA: "+tiempoConpantallaEncendida);
+                            //si existe timer lo paramos
+                            if (cdt != null) {
+                                cdt.cancel();
+                                //y por seguridad lo anulamos
+                                cdt = null;
+                            }
 
 
-                        if (tiempoenqueseencendiopantalla > 1000 && tiempoquequedabacaundoseencendiolapantalla > 3000) {
+                            //chequeamos el tiempo que ha pasado:
+                            long tiempoenqueseencendiopantalla = Myapplication.preferences.getLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA, 0);
 
-                            //es un a segurida por si falla la preferncia!!!
+                            long tiempoquequedabacaundoseencendiolapantalla = Myapplication.preferences.getLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, 0);
 
-                            //SI LA DIFERENCIA ENTRE EL TIMEPO QUE QUEDABA AL ENCENDER LA PANTALLA (tiempoquequedabacaundoseencendiolapantalla )
-                            //Y EL QUE QUEDA AHORA:tiempoTotalParaJugar
-                            //ES MENOR QUE LA DIFERENCIA ENTRE EL TIEMPO  LLEVA LA PANTALLA ENCENDIDA:tiempoConpantallaEncendida
-                            //ENTONCES CORRIGE:
-                            //OJO CON MARGEN DE ERROR DE 5 SEGS!!! O SALTARIA CASIS SIEMPRE
-
-                            if (((tiempoquequedabacaundoseencendiolapantalla - tiempoTotalParaJugar) - 5000) > tiempoConpantallaEncendida) {
-
-                                Log.d("INFO 2", "TIEMPO corregido en intent de pantalla apagada de : " + tiempoTotalParaJugar);
-
-                                //CORREGIR!!!!
-                                tiempoTotalParaJugar = tiempoquequedabacaundoseencendiolapantalla - tiempoConpantallaEncendida;
-
-                                if (tiempoTotalParaJugar < 1)
-                                    tiempoTotalParaJugar = 2000;//por seguridad para que no sea NEGATIVO!!
+                            long tiempoConpantallaEncendida = System.currentTimeMillis() - tiempoenqueseencendiopantalla;
 
 
-                                Log.d("INFO 3", "TIEMPO corregido en intent de pantalla apagada a new time: : " + tiempoTotalParaJugar);
-                                //guardamos el timepo restante
+                             Log.d("INFO 2","TIEMPO que quedaba cunado se encendio la pantalla: "+tiempoquequedabacaundoseencendiolapantalla);
+                              Log.d("INFO 2","TIEMPO que se encedio la pantalla : "+tiempoenqueseencendiopantalla);
+                              Log.d("INFO 2","TIEMPO PANTALLA ENCENDIA: "+tiempoConpantallaEncendida);
 
-                                Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante, tiempoTotalParaJugar).commit();
+
+                            if (tiempoenqueseencendiopantalla > 1000 && tiempoquequedabacaundoseencendiolapantalla > 3000 && tiempoConpantallaEncendida>1000 && tiempoConpantallaEncendida<(3*60*60*1000)) {
+
+                                //es un a segurida por si falla la preferncia!!!
+
+                                //SI LA DIFERENCIA ENTRE EL TIMEPO QUE QUEDABA AL ENCENDER LA PANTALLA (tiempoquequedabacaundoseencendiolapantalla )
+                                //Y EL QUE QUEDA AHORA:tiempoTotalParaJugar
+                                //ES MENOR QUE LA DIFERENCIA ENTRE EL TIEMPO  LLEVA LA PANTALLA ENCENDIDA:tiempoConpantallaEncendida
+                                //ENTONCES CORRIGE:
+                                //OJO CON MARGEN DE ERROR DE 5 SEGS!!! O SALTARIA CASIS SIEMPRE
+
+                                //Y OJO SI ES NEGATIVA SE CAMBIO LA HORA ..ASI QUE NO LO HACE!!
+                                //Y SI ES MAS DE 3 HORAS ENCENDIDA TAMPOCO(SEGURAMNETE AUMENTO UN DIA!!!!)..ESTO NO ES 100% FIABLE...
+
+                                if (((tiempoquequedabacaundoseencendiolapantalla - tiempoTotalParaJugar) - 5000) > tiempoConpantallaEncendida) {
+
+                                    Log.d("INFO 2", "TIEMPO corregido en intent de pantalla apagada de : " + tiempoTotalParaJugar);
+
+                                    //CORREGIR!!!!
+                                    tiempoTotalParaJugar = tiempoquequedabacaundoseencendiolapantalla - tiempoConpantallaEncendida;
+
+                                    if (tiempoTotalParaJugar < 1)
+                                        tiempoTotalParaJugar = 2000;//por seguridad para que no sea NEGATIVO!!
+
+
+                                    Log.d("INFO 3", "TIEMPO corregido en intent de pantalla apagada a new time: : " + tiempoTotalParaJugar);
+                                    //guardamos el timepo restante
+
+                                    Myapplication.preferences.edit().putLong(Myapplication.PREF_TiempoRestante, tiempoTotalParaJugar).commit();
+
+
+                                }
+
+                            }
+
+                            //new abril 17
+                            //chequeamos el tiempo que ha pasado: para saber si se CAMBIO LA HORA/DIA
+
+
+                            //solo si la variacion de es de mas de 3 HORAS ADELNTE!!!(3*60*60*1000)
+                            //o es negativo!!1(hay para atras!!)
+
+                            if ((tiempoConpantallaEncendida > (long) 3 * 60 * 60 * 1000) || tiempoConpantallaEncendida < 2 * 1000) {
+                                //intewnto cambiar hora
+
+
+                                Log.d("INFO", "detectaado cambio de hora MAYOR DE 3 HORAS O NEGATIVO en onstarcommnad de timepo:");
+
+                                //toastHandler.sendEmptyMessage(0);//asi simempre pone "test"..npi =¿?=¿
+                                //lo hago mejor asi
+
+
+                                Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true).commit();
+
+
+                                //COMO AL CAMBIAR LA HORA EL TIMER.SCHEDUEL NO FUNCIONA LO RECREO
+
+                                if (timer != null) {
+                                    timer.cancel();
+                                }
+                                timer = null;
+
+
+                                startTimerNewDay2();
 
 
                             }
 
-                        }
+
 
                     }
-
                 }
                 //3º)chequeamos si es una de intento de cambio de hora
 
                 if (intentExtra != null && intentExtra.equals("cambio_de_hora")) {
+                    //TODO ESTO NUNCA SE LLAMARA ALA HABER ANULADO EL RECEIVER EN MANIFEST
+
 
                     boolean intento_CambioHora = intent.getBooleanExtra("cambio_de_hora", false);
 
@@ -565,7 +631,7 @@ public class LockService extends Service {
         //SI LA PANTALLA ESTA APAGADA..ESTO VUELVE
 
         if (isScreenOn(this)) {
-            Log.d("INFO","PANTALLA ON EN  TimerTiempoJuegoIniciarOajustar:"+ (isScreenOn(this)));//FUNCIONA OK
+           // Log.d("INFO","PANTALLA ON EN  TimerTiempoJuegoIniciarOajustar:"+ (isScreenOn(this)));//FUNCIONA OK
             //ES UNA DOBLE SEGURIDAD PX A VECES SGIGUE CONTANTO AUN SIN USAR....
                 //solo se ejecuta si l apnatalla esta apagada
 
@@ -619,41 +685,45 @@ public class LockService extends Service {
                 Looper.prepare();
             }
             */
+            if (cdt== null) {
 
-            cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
+                Log.d("INFO","PANTALLA ON EN  TimerTiempoJuegoIniciarOajustar:"+ (isScreenOn(this)));//FUNCIONA OK
+                cdt = new CountDownTimer(tiempoTotalParaJugar, 1000) {
 
-                @Override
-                public void onTick(long millisUntilFinished) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
 
-                   // Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
-                    //update tiempoTotalParaJugar with the remaining time left
-                    tiempoTotalParaJugar = millisUntilFinished;
+                        // Log.i("INFO", "Countdown seconds remaining on TimerTiempoJuegoIniciarOajustar:" + millisUntilFinished / 1000);
+                        //update tiempoTotalParaJugar with the remaining time left
+                        tiempoTotalParaJugar = millisUntilFinished;
 
 
+                        if (!isScreenOn(mContext)) {
+                            // POR SEGURIDAD NOS ASEGUIRAMOS QEU SOLO FUNCIONE SI La PNATLLA ESTA ENCENDIDA
+                            cdt.cancel();
 
-                    if (!isScreenOn(mContext)){
-                        // POR SEGURIDAD NOS ASEGUIRAMOS QEU SOLO FUNCIONE SI La PNATLLA ESTA ENCENDIDA
-                        cdt.cancel();
+                            //y por seguridad lo anulamos
+                            cdt = null;
 
-                        //y por seguridad lo anulamos
-                        cdt=null;
+                            //y nos autollamamos..que solo empezara si realemnte esta encendida!!
 
-                        //y nos autollamamos..que solo empezara si realemnte esta encendida!!
+                            TimerTiempoJuegoIniciarOajustar();
+                        }
 
-                        TimerTiempoJuegoIniciarOajustar();
+
                     }
 
-                }
+                    @Override
+                    public void onFinish() {
 
-                @Override
-                public void onFinish() {
+                        //TODO se acabo la tablet!!
+                        //  Log.i("INFO", "Timer finished");
+                    }
+                };
 
-                    //TODO se acabo la tablet!!
-                    //  Log.i("INFO", "Timer finished");
-                }
-            };
+                cdt.start();
 
-            cdt.start();
+            }
 
 
         }

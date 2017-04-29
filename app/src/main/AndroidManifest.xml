@@ -29,13 +29,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        //para detectar cambio hora
+        //para detectar cambio hora..lo ignoro lo calculo al apagar pantalla
+        <!--
         <receiver android:name=".IntentoCambiarHoraIntentReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
+
+        -->
         //para device admin
         <receiver
             android:name=".DeviceAdmin"

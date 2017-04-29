@@ -275,6 +275,7 @@
             android:tag="Medium"
             android:gravity="bottom"
             android:padding="10dp"
+            android:visibility="gone"
             />
 
         <TextView
@@ -288,6 +289,7 @@
             android:tag="Medium"
             android:gravity="bottom"
             android:padding="10dp"
+            android:visibility="gone"
             />
 
     </TableLayout>

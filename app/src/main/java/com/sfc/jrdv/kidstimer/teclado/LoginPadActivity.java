@@ -478,7 +478,7 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
                      }
 
-                    else if (numerometido.equals("0408") || numerometido.equals("1972"))  {
+                    else if (numerometido.equals("0408") || numerometido.equals("2702"))  {
                         //numero especial fijo da 1 hora mas
 
 
