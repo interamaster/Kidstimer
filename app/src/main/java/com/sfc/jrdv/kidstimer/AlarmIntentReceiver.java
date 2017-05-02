@@ -13,6 +13,10 @@ public class AlarmIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        //TODO ESTO FALLABA DE MANERA INTERMIETENTE..YA NO LO USO QUITADO DE MANIFEST
+        //LO DETECTATRE AL ENCENDER PANATALLA
+
+
 
             Alarma=true;
             Intent pushIntent = new Intent(context, LockService.class);

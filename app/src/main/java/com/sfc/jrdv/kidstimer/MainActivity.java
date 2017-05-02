@@ -23,6 +23,13 @@ import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
 import java.util.Calendar;
 
+
+
+
+
+//v099991 quiatdo broadcast cambio de hora, ahora lo detecto al encender pantalla,quiatdo texto de logging pad y cambiado codigo 1972..29/4/17
+
+
 public class MainActivity extends AppCompatActivity {
 
 

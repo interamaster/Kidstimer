@@ -32,6 +32,8 @@ public class Myapplication extends Application {
     public static final String PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO="tiemporestantealencenderpantalla";
     public static final String PREF_BOOL_USADOYA_CODE_EMERGENCIA="Boolemergecia";
     public static final String PREF_UID_KID="UIDKID";
+  //  public static final String PREF_BOOL_NEWDIAYADADOTIEMP ="NEWDIA";
+    public static final String PREF_DIAHOY="DIAHOY";
 
     @Override
     public void onCreate() {

@@ -51,8 +51,13 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        //para alarma
-        <receiver android:name=".AlarmIntentReceiver" />
+        //para alarma ..TAMPOCO LO USO LO HARE AL ENCENDER PANTALLA
+        <!--
+        <receiver android:process=":remote"
+                android:name=".AlarmIntentReceiver" >
+
+        </receiver>
+        -->
 
         <service
             android:name=".timerService"

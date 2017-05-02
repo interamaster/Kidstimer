@@ -25,15 +25,9 @@ import android.util.Log;
 import android.view.Display;
 import android.widget.Toast;
 
-import com.jaredrummler.android.processes.AndroidProcesses;
-import com.jaredrummler.android.processes.ProcessManager;
-import com.jaredrummler.android.processes.models.AndroidAppProcess;
-import com.jaredrummler.android.processes.models.AndroidProcess;
 import com.sfc.jrdv.kidstimer.teclado.LoginPadActivity;
 
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
@@ -140,7 +134,8 @@ public class LockService extends Service {
 
 
         //emepezamos el timer de cada 24h at nidnight
-        startTimerNewDay2();
+        //YA NO LO USAMOS AL DETECTARLO AL ENCENDER PÀNTALLA
+        //startTimerNewDay2();
 
 
 
@@ -177,7 +172,34 @@ public class LockService extends Service {
 
         }
 
-                // una vez sabida la cantidad creamos el timer!!
+        //guardamos el EL TIEMPO EN Q SE ENCENDIO:
+
+        Myapplication.preferences.edit().putLong(Myapplication.PREF_HORA_ENCENDIO_APAGOPANTALLA, System.currentTimeMillis()).commit();
+
+        //guardamos el timepo que quedaba cunado se encendio:
+
+        Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, tiempoTotalParaJugar).commit();
+
+        //Y LA FECHA DE HOY
+
+
+        long millis=System.currentTimeMillis();
+        Calendar c=Calendar.getInstance();
+        c.setTimeInMillis(millis);
+
+        int year=c.get(Calendar.YEAR);
+        int mes=c.get(Calendar.MONTH);
+        int dia=c.get(Calendar.DAY_OF_MONTH);
+
+
+        String fechaactual=String.valueOf(year)+"-"+String.valueOf(mes)+"-"+String.valueOf(dia);
+
+         Myapplication.preferences.edit().putString(Myapplication.PREF_DIAHOY, fechaactual).commit();
+        Log.d("INFO"," GUARDADO DIA DE HOY  EN ONCREAT SERVICE: "+fechaactual);
+
+
+
+            // una vez sabida la cantidad creamos el timer!!
 
 
         //no lo podemois hacer en una funcion aparate porque da crash!!
@@ -388,16 +410,73 @@ public class LockService extends Service {
 
                         Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, tiempoTotalParaJugar).commit();
 
-                        //new abril 17
+
+       //ANULAMOS EL SISTEMA DE ALARMA MANGER QUE FALLA DE MANERA INTERMITENTE!!
+       //CHEQEUEMOS SI AL ENCENDER L APANTALLA ES UN NUEVO DIA
+
+
+
+
+
+                        //si en el metodo startTimerNewDay2 estaba en true no chequesmo nada
+
+                        String diahoy = Myapplication.preferences.getString(Myapplication.PREF_DIAHOY,"NONE");//por defecto vale NONE
+
+                        long millis=System.currentTimeMillis();
+                        Calendar c=Calendar.getInstance();
+                        c.setTimeInMillis(millis);
+
+                        int year=c.get(Calendar.YEAR);
+                        int mes=c.get(Calendar.MONTH);
+                        int dia=c.get(Calendar.DAY_OF_MONTH);
+                       // int hours=c.get(Calendar.HOUR);
+                       // int minutes=c.get(Calendar.MINUTE);
+
+                        String fechaactual=String.valueOf(year)+"-"+String.valueOf(mes)+"-"+String.valueOf(dia);
+
+                        Log.d("INFO"," DETECTADO AL ENCENDER PANTALLA HOY ES: "+fechaactual);
+
+                       // Boolean inetentocambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true);
+
+
+                        if (!diahoy.equals("NONE") && !diahoy.equals(fechaactual) ){
+
+                            //ES OTRO DIA!!!
+                            //PONEMOS EN LAS PREF EL DIA NEUVO:
+
+                            Myapplication.preferences.edit().putString(Myapplication.PREF_DIAHOY, diahoy).commit();
+
+
+                            Log.d("INFO"," DETECTADO ES DISTINTO DIA!!! AL ENCNDER PANTALLA: "+fechaactual +"Y ESTABA GUARADAO: "+diahoy);
+
+
+                            //LLAMAMOS AL METODO DE CREAR UN NUEVO DIA Y AJUSTAR TIEMPOS
+                                       CalcularNewDayTime4Play();
+
+                            //GUARDAMOS EL NUEVO DIA
+
+                            Myapplication.preferences.edit().putString(Myapplication.PREF_DIAHOY, fechaactual).commit();
+                            Log.d("INFO"," GUARDADO DIA  ACTULA TRAS DAR TIMEPO NUEVO AL ENCENDER PANTALLA: "+fechaactual);
+
+
+                            //AHORA SI QUITAMOS EL INTENTI DE CAMBIO DE HORA
+                            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false).commit();
+
+                                }
+
+
+
+                          //new abril 17
                         //CHEQEUAMOS SI HUBO UN CAMBIO DE HORA LA ULTIMA VEZ
 
-                        Boolean inetentocambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true);
+                       Boolean inetentocambioHora = Myapplication.preferences.getBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, true);
 
 
                         if (inetentocambioHora) {
 
                             //annulamos el aviso
-                            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, false).commit();
+                            //NO!! UQE SALGA CAD VEZ ENCIENDAS LA PANTALLA..SI NO AL SIGUINTEE DIA L ESTR EN FALSE SI DA EL TIMEPO!!
+                           // Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA, false).commit();
 
 
                             Handler handler = new Handler(Looper.getMainLooper());
@@ -502,11 +581,36 @@ public class LockService extends Service {
                                 }
                                 timer = null;
 
+                                //YA NO USO EL ALRM MANAGER LO DETECTO AL ENCENDER PANTALLA
+                               // startTimerNewDay2();
 
-                                startTimerNewDay2();
+                                //Y GURADO LA NUEVA FECHA DEL CAMBIO DE HORA!!!
+                                //POARA QUE AL VOLVER A ENCEDER PANTALLA NO DE TIEMPO HASTA Q DE VERDAD PASE UN DIA!!
+                                String diahoy = Myapplication.preferences.getString(Myapplication.PREF_DIAHOY,"NONE");//por defecto vale NONE
+
+                                long millis=System.currentTimeMillis();
+                                Calendar c=Calendar.getInstance();
+                                c.setTimeInMillis(millis);
+
+                                int year=c.get(Calendar.YEAR);
+                                int mes=c.get(Calendar.MONTH);
+                                int dia=c.get(Calendar.DAY_OF_MONTH);
+                                // int hours=c.get(Calendar.HOUR);
+                                // int minutes=c.get(Calendar.MINUTE);
+
+                                String fechaactual=String.valueOf(year)+"-"+String.valueOf(mes)+"-"+String.valueOf(dia);
+
+                                Log.d("INFO"," DETECTADO CAMBIO DE DIA A MANO SE GUARDA ESTE DIA PARA QUE NO DE EL TIMEPO.. HOY ES: "+fechaactual);
 
 
-                            }
+                                    Myapplication.preferences.edit().putString(Myapplication.PREF_DIAHOY, fechaactual).commit();
+
+
+
+
+
+
+                                }
 
 
 
@@ -514,7 +618,7 @@ public class LockService extends Service {
                 }
                 //3º)chequeamos si es una de intento de cambio de hora
 
-                if (intentExtra != null && intentExtra.equals("cambio_de_hora")) {
+  /*              if (intentExtra != null && intentExtra.equals("cambio_de_hora")) {
                     //TODO ESTO NUNCA SE LLAMARA ALA HABER ANULADO EL RECEIVER EN MANIFEST
 
 
@@ -562,16 +666,22 @@ public class LockService extends Service {
                         }
                         timer = null;
 
-
-                        startTimerNewDay2();
+                        //ESTO YA NO SE USA ALA NULAR EL ALARMAMANGER
+                        //startTimerNewDay2();
 
 
                     }
                 }
-
+*/
                 //4ºchequeamos si es una alarmaMagerBrodacast
 
-                if (intentExtra != null && intentExtra.equals("Alarma_reseteo_timers")) {
+  /*              if (intentExtra != null && intentExtra.equals("Alarma_reseteo_timers")) {
+
+
+                    //TODO ESTO NUNCA SE LLAMARA ALA HABER ANULADO EL RECEIVER EN MANIFEST
+
+
+
                     boolean AlarmaMagerBrodacast = intent.getBooleanExtra("Alarma_reseteo_timers", false);
                     if (AlarmaMagerBrodacast) {
                         //AlarmaReceiver de Broadcast recibida
@@ -603,9 +713,15 @@ public class LockService extends Service {
                         Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA, false).commit();
 
 
+
+
                     }
 
                 }
+
+   */
+
+
             }
 
 
@@ -814,6 +930,13 @@ public class LockService extends Service {
 
     private void startTimerNewDay2(){
 
+
+        //ponemos a true la PREF de es un nuevo dia!!
+
+/*
+        //DECIMOS QUE YA SE HIZO UN NUEVO DIA!!!
+        Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_NEWDIAYADADOTIEMP, true).commit();
+*/
         // Schedule to run every day in midnight
 
         // Scheduling task at today : 00:00:22 PM
@@ -851,7 +974,7 @@ public class LockService extends Service {
 
 
         Intent alarmIntent = new Intent(this, AlarmIntentReceiver.class);
-        pendingIntentAlarma = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        pendingIntentAlarma = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);//deberia ser getService  en vez de  getBroadcast..no creo?¿
         MiAlarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         MiAlarmManager.cancel(pendingIntentAlarma);
         Log.d("INFO"," ANULADA LA ALARMA  A LO BESTIA!! ");
@@ -899,8 +1022,8 @@ public class LockService extends Service {
 
             //lo ponemos de nuevo a normal:
             //poenmos a true le intento
-
-            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false).commit();
+            //NO PX AL VOLVER A ENCEDR L APANTALLA YA SE LO TRAGA Y DA EL TIEMPO!!!
+           // Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false).commit();
 
         }
 
@@ -976,7 +1099,7 @@ public class LockService extends Service {
             }
             //una vez sepamos el dia que ajuste el Timerdel timepo de jeugo con este valor: en TimerTiempoJuegoIniciarOajustar()
             //no px da erro de thread ?¿?
-            // TimerTiempoJuegoIniciarOajustar();
+            TimerTiempoJuegoIniciarOajustar();
 
         }
 
