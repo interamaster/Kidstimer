@@ -9,6 +9,12 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    //para los ads
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
     <application
         android:name=".Myapplication"
         android:allowBackup="true"
@@ -58,23 +64,30 @@
 
         </receiver>
         -->
-
+        <!--
+        //no se usan
         <service
             android:name=".timerService"
             android:exported="false" />
         <service
             android:name=".ejemploService"
             android:exported="false" />
+            -->
         //android:stopWithTask="false" para que notifique al service al quitarlo de la barra de
         recientes
         <service
             android:name=".LockService"
             android:exported="false"
             android:stopWithTask="false" />
+
+        <!--
+        //no se usa
         <service
             android:name=".LockServiceEjemplo1"
             android:enabled="true"
             android:exported="true" />
+
+            -->
 
         <activity android:name=".BlockedActivity" />
         //loginActivity

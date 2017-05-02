@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Kids timer</string>
+    <string name="app_name">Timer 4 kids</string>
     <!-- Login -->
     <string name="activity_login_enter_access_code">Enter Access Code</string>
     <string name="activity_login">Login</string>
     <string name="activity_login_save_user_num">Save</string>
     <string name="activity_login_error">Error logging in, check your pin and try again.</string>
     <string name="activity_login_no_pin">You must type in a Pin #</string>
-    <string name="activity_login_delete">BORRAR</string>
+    <string name="activity_login_delete">Delete</string>
     <string name="one">1</string>
     <string name="two">2</string>
     <string name="three">3</string>
@@ -27,5 +27,15 @@
     <string name="waitoneminuteaviso">WAIT 1 MINUTE TO ENTER A NEW CODE!!!</string>
     <string name="activaadministrator">NOW ACTIVATE THE ADMIN MANAGER TO BE ABLE TO WORK PROPERLY</string>
     <string name="cambiohoraaviso">DUE TO CHANGE TIME CHEAT....YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)</string>
+
+
+    <!-- AdMob ad unit IDs -->
+    <string name="banner_inferior_ad_unit_id">ca-app-pub-6700746515260621/3981955390</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-6700746515260621/1946818994</string>
+
+
+
+    <string name="helpads">Watch add to get 5 extra minutes(click the plus button--maximum 2 times at day)</string>
+
 
 </resources>

@@ -20,6 +20,11 @@ import android.widget.TextView;
 
 import com.cardinalsolutions.android.arch.autowire.AndroidLayout;
 import com.cardinalsolutions.android.arch.autowire.AndroidView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.sfc.jrdv.kidstimer.DialogEmergenciaActivity;
 import com.sfc.jrdv.kidstimer.LockService;
 import com.sfc.jrdv.kidstimer.Myapplication;
@@ -119,6 +124,11 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     private TextView PassKid4Generator;
 
 
+    //para los ads
+
+    private AdView mBottomBanner;
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,10 +181,65 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
         NombreKid4Generator.setText("KIDSTIMER GENERATOR/REMOTE  NAME: "+ninoname);
 
         PassKid4Generator.setText("KIDSTIMER REMOTE  PASSWORD: "+kiduid4pass);
+
+
+        //para los ads
+
+        //ads initialize:
+
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(this, "ca-app-pub-6700746515260621~1028488999");
+        //banner:
+
+        mBottomBanner = (AdView) findViewById(R.id.av_bottom_banner);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)//
+                .build();
+        mBottomBanner.loadAd(adRequest);
+        //instrsticial
+
+        mInterstitialAd = new InterstitialAd(this);
+
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+
+        requestNewInterstitial();
+        //le añadimo listener para que de timepo alcerrarlo
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+
+
+               // requestNewInterstitial();
+                //no uqeremos que cargue otro
+
+                //TODO le apsamos el intent con 5 min mas!! y fslata un toast avisando!!
+
+                //reiniicmaos el intet service psasndole un valor nuevo
+
+                Intent intent =new Intent(LoginPadActivity.this,LockService.class);
+                intent.putExtra(LockService.EXTRA_MESSAGE,"tu nuevo timepo sera de 15 min mas 15*60*1000=900000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+                intent.putExtra(LockService.EXTRA_TIME,"300000");//tu nuevo timepo sera de 15 min mas 15*60*1000=900000
+                startService(intent);
+
+
+                finish();
+
+
+            }
+        });
+
     }
 
 
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice("TU DEVICE ID")
+                .build();
 
+        mInterstitialAd.loadAd(adRequest);
+    }
 
 
     private void iniciaVoces(){
@@ -219,10 +284,20 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
             textToSpeech.shutdown();
         }
         super.onDestroy();
+
+        if (mBottomBanner != null) {
+            mBottomBanner.destroy();
+        }
     }
 
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mBottomBanner != null) {
+            mBottomBanner.pause();
+        }
+    }
 
     @Override
     protected void onRestart() {
@@ -236,6 +311,9 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     protected void onResume() {
         super.onResume();
         Log.d("INFO"," ON RESUME LOGGINPAD :  ");
+        if (mBottomBanner != null) {
+            mBottomBanner.resume();
+        }
     }
 
 
@@ -924,4 +1002,17 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
     }
 
 
+    public void AnuncioPulsado(View view) {
+
+        //se pulso en ve anunio intesticial!!
+
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+
+            //TODO poner toast si nos e cargo aun!!!
+
+        }
+
+    }
 }
