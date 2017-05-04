@@ -44,6 +44,8 @@ dependencies {
     //PARA LOS ADS
 
     compile 'com.google.firebase:firebase-ads:10.0.1'
+
+
 }
 
 // Add to the bottom of the file

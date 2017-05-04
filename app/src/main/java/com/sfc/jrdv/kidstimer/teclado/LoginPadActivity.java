@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cardinalsolutions.android.arch.autowire.AndroidLayout;
 import com.cardinalsolutions.android.arch.autowire.AndroidView;
@@ -215,6 +216,8 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                 //no uqeremos que cargue otro
 
                 //TODO le apsamos el intent con 5 min mas!! y fslata un toast avisando!!
+
+                Toast.makeText(getApplicationContext(), getString(R.string.anuncioyavistoten5min), Toast.LENGTH_LONG).show();
 
                 //reiniicmaos el intet service psasndole un valor nuevo
 
@@ -1006,11 +1009,40 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
 
         //se pulso en ve anunio intesticial!!
 
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
 
-            //TODO poner toast si nos e cargo aun!!!
+
+        int numanuncios=   Myapplication.preferences.getInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0);
+        Log.d("INFO","LLEVAS HOY ANUNCIOS:"+numanuncios);
+
+
+        if (numanuncios<3) {
+            //solo si es menor de 2!!!
+
+            if (mInterstitialAd.isLoaded()) {
+
+                //aumentamos el unmdeanucios
+                numanuncios=numanuncios+1;
+
+                Log.d("INFO","y ahora un anuncio mas!!!:"+numanuncios);
+                //lo guaradamos
+                Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, numanuncios).commit();
+
+
+
+                mInterstitialAd.show();
+            } else {
+
+                //TODO poner toast si nos e cargo aun!!!
+                Toast.makeText(getApplicationContext(), getString(R.string.anucionolisto), Toast.LENGTH_LONG).show();
+
+            }
+        }
+
+        else {
+
+            //llevas mas de 2 anuncios!!
+
+            Toast.makeText(getApplicationContext(), getString(R.string.anuncioyavistoten5min), Toast.LENGTH_LONG).show();
 
         }
 

@@ -199,7 +199,12 @@ public class LockService extends Service {
 
 
 
-            // una vez sabida la cantidad creamos el timer!!
+
+        //AL CREARSE EL NUMERO DE USOS DE ANUNCIOS ES 0
+
+        Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
+
+        // una vez sabida la cantidad creamos el timer!!
 
 
         //no lo podemois hacer en una funcion aparate porque da crash!!
@@ -561,7 +566,7 @@ public class LockService extends Service {
                             //solo si la variacion de es de mas de 3 HORAS ADELNTE!!!(3*60*60*1000)
                             //o es negativo!!1(hay para atras!!)
 
-                            if ((tiempoConpantallaEncendida > (long) 3 * 60 * 60 * 1000) || tiempoConpantallaEncendida < 2 * 1000) {
+                            if ((tiempoConpantallaEncendida > (long) 3 * 60 * 60 * 1000) || tiempoConpantallaEncendida < 1) {
                                 //intewnto cambiar hora
 
 
@@ -1025,11 +1030,23 @@ public class LockService extends Service {
             //NO PX AL VOLVER A ENCEDR L APANTALLA YA SE LO TRAGA Y DA EL TIEMPO!!!
            // Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_INTENTO_CAMBIO_HORA,false).commit();
 
+            //PERO SI DEJAMOS LOS ANUNCIOS
+
+
+
+            Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
+
         }
 
         else {
 
             Log.d("INFO"," AJSUTE TIMEPO OK EN  CalcularNewDayTime4Play EN SERVICE !!");
+
+            //POENMOS A 0 LOS ANUNCIOS
+
+            //AL CREARSE EL NUMERO DE USOS DE ANUNCIOS ES 0
+
+            Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
 
             //1º)PARAMOS EL TIMER
 

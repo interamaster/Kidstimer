@@ -27,7 +27,9 @@
     <string name="waitoneminuteaviso">WAIT 1 MINUTE TO ENTER A NEW CODE!!!</string>
     <string name="activaadministrator">NOW ACTIVATE THE ADMIN MANAGER TO BE ABLE TO WORK PROPERLY</string>
     <string name="cambiohoraaviso">DUE TO CHANGE TIME CHEAT....YOUR KIDS TIMER WILL NOT INCREASE TODAY TIME...XD(POR LISTO)</string>
-
+    <string name="anucionolisto">PLEASE WAIT TILL ADD IS LOADED(CHECK INTERNET CONNECTION)</string>
+    <string name="anuncioyavistoten5min">GOOD!! YOU GET EXTRA 5 MINUTES</string>
+    <string name="yallevas2anuncios">SORRY NO MORE ADS TILL TOMORROW</string>
 
     <!-- AdMob ad unit IDs -->
     <string name="banner_inferior_ad_unit_id">ca-app-pub-6700746515260621/3981955390</string>

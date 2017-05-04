@@ -27,8 +27,9 @@
     <string name="waitoneminuteaviso">ESPERA 1 MINUTO PARA METER NUEVO CODE!!!</string>
     <string name="activaadministrator">AHORA ACTIVA EL DEVICE MANAGER PARA QUE ESTO FUNCIONE SIEMPRE</string>
     <string name="cambiohoraaviso">POR INTENTAR CAMBIAR LA HORA.....ESTA NOCHE NO SE AÑADIRA TU HORA DE NUEVO DIA(POR LISTO)</string>
-
-
+    <string name="anucionolisto">ESPERA A QUE SE CARGUE EL ANUNCIO(MIRA SI TIENES INTERNET)</string>
+    <string name="anuncioyavistoten5min">TOMA!!5 MINUTOS MAS</string>
+    <string name="yallevas2anuncios">LO SIENTO ..HASTA MAÑANA NO HAY MAS</string>
 
 
     <!-- AdMob ad unit IDs -->
