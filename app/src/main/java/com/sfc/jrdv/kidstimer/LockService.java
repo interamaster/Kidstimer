@@ -180,29 +180,41 @@ public class LockService extends Service {
 
         Myapplication.preferences.edit().putLong(Myapplication.PREF_TIEMPO_RESTANTE_CUANDOPANTALLA_ENCENDIO, tiempoTotalParaJugar).commit();
 
-        //Y LA FECHA DE HOY
+        //Y LA FECHA DE HOY solo si es NONE(no habia antes
 
 
-        long millis=System.currentTimeMillis();
-        Calendar c=Calendar.getInstance();
-        c.setTimeInMillis(millis);
+        String diahoy = Myapplication.preferences.getString(Myapplication.PREF_DIAHOY,"NONE");//por defecto vale NONE
 
-        int year=c.get(Calendar.YEAR);
-        int mes=c.get(Calendar.MONTH);
-        int dia=c.get(Calendar.DAY_OF_MONTH);
+        if (diahoy.equals("NONE")) {
 
 
-        String fechaactual=String.valueOf(year)+"-"+String.valueOf(mes)+"-"+String.valueOf(dia);
+            long millis = System.currentTimeMillis();
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(millis);
 
-         Myapplication.preferences.edit().putString(Myapplication.PREF_DIAHOY, fechaactual).commit();
-        Log.d("INFO"," GUARDADO DIA DE HOY  EN ONCREAT SERVICE: "+fechaactual);
+            int year = c.get(Calendar.YEAR);
+            int mes = c.get(Calendar.MONTH);
+            int dia = c.get(Calendar.DAY_OF_MONTH);
 
 
+            String fechaactual = String.valueOf(year) + "-" + String.valueOf(mes) + "-" + String.valueOf(dia);
+
+            Myapplication.preferences.edit().putString(Myapplication.PREF_DIAHOY, fechaactual).commit();
+            Log.d("INFO", " GUARDADO DIA DE HOY  EN ONCREAT SERVICE: " + fechaactual);
+
+        }
 
 
-        //AL CREARSE EL NUMERO DE USOS DE ANUNCIOS ES 0
+        //AL CREARSE EL NUMERO DE USOS DE ANUNCIOS ES 0 ..ojo solo si no es >0
 
-        Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
+
+        int numanuncios=   Myapplication.preferences.getInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0);
+        if (numanuncios<=1) {
+
+            Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
+            Log.d("INFO","LLEVAbas HOY ANUNCIOS: EN ONCREATE Y SE HAN PUESTO A 0 "+numanuncios);
+
+        }
 
         // una vez sabida la cantidad creamos el timer!!
 
@@ -1036,6 +1048,10 @@ public class LockService extends Service {
 
             Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
 
+            //y el poder usar el codigo 0000
+
+            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA,false).commit();
+
         }
 
         else {
@@ -1047,6 +1063,10 @@ public class LockService extends Service {
             //AL CREARSE EL NUMERO DE USOS DE ANUNCIOS ES 0
 
             Myapplication.preferences.edit().putInt(Myapplication.PREF_INT_NUMERO_USOS_EXTRA_TIME_ANUNCIOS, 0).commit();
+
+            //y el poder usar el codigo 0000
+
+            Myapplication.preferences.edit().putBoolean(Myapplication.PREF_BOOL_USADOYA_CODE_EMERGENCIA,false).commit();
 
             //1º)PARAMOS EL TIMER
 

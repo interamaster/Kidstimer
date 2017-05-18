@@ -857,6 +857,11 @@ public class LoginPadActivity extends BaseActivity implements View.OnClickListen
                 finish();
             }
 
+            else {
+
+                Toast.makeText(getApplicationContext(), getString(R.string.urgenciayausado), Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 

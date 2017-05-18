@@ -39,5 +39,7 @@
 
     <string name="helpads">Watch add to get 5 extra minutes(click the plus button--maximum 2 times at day)</string>
 
+    <string name="urgenciayausado">ALREADY USED..WAIT TILL TOMORROW</string>
+
 
 </resources>

@@ -29,7 +29,8 @@ import java.util.Calendar;
 
 //v099991 quiatdo broadcast cambio de hora, ahora lo detecto al encender pantalla,quiatdo texto de logging pad y cambiado codigo 1972..29/4/17
 //v099992 cambiada logica de dar timepo, en vez de alarmmanager que falla intermitentemenete, se detecta al encender pantalla, asi comom el intento de cambio de hora o dia(se han quitado del manifest el receiver del alarmmanager)
-
+//v1 final googleplay mayo 17
+//v1.1 arreglado code 0000 ,pref de num anuncios
 public class MainActivity extends AppCompatActivity {
 
 
