@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+   // buildToolsVersion "23.0.2" //W To suppress this warning, remove "buildToolsVersion '23.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
     defaultConfig {
         applicationId "com.sfc.jrdv.kidstimer"
         minSdkVersion 19

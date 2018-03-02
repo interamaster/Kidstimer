@@ -25,7 +25,7 @@
     <string name="fiveminaviso">TE QUEDAN SOLO 5 MINUTOS!!!</string>
     <string name="emergencyaviso">HAS USADO EL CODIGO DE EMERGENCIA,DISPONES DE 10 MIN EXTRAS(PARA DESINSTALAR LA APP SI NO TE GUSTA POR EJEMPLO):ESTE CODIGO ES DE UN SOLO USO!!!NO LO PODRAS VOLVER A USAR HASTA MAÑANA</string>
     <string name="waitoneminuteaviso">ESPERA 1 MINUTO PARA METER NUEVO CODE!!!</string>
-    <string name="activaadministrator">AHORA ACTIVA EL DEVICE MANAGER PARA QUE ESTO FUNCIONE SIEMPRE</string>
+    <string name="activaadministrator">ESTA APLICACION NECESITA PERMISO DE ADMINISTRADOR PARA:\n*APAGAR PANTALLA SI FALLA MAS DE 3 VECES AL METER CODIGO \n*EVITAR EL CIERRE/DESINSTALACION SIMPLE</string>
     <string name="cambiohoraaviso">POR INTENTAR CAMBIAR LA HORA.....ESTA NOCHE NO SE AÑADIRA TU HORA DE NUEVO DIA(POR LISTO)</string>
     <string name="anucionolisto">ESPERA A QUE SE CARGUE EL ANUNCIO(MIRA SI TIENES INTERNET)</string>
     <string name="anuncioyavistoten5min">TOMA!!5 MINUTOS MAS</string>
