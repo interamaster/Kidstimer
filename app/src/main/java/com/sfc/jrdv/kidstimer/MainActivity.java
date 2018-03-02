@@ -31,6 +31,8 @@ import java.util.Calendar;
 //v099992 cambiada logica de dar timepo, en vez de alarmmanager que falla intermitentemenete, se detecta al encender pantalla, asi comom el intento de cambio de hora o dia(se han quitado del manifest el receiver del alarmmanager)
 //v1 final googleplay mayo 17
 //v1.1 arreglado code 0000 ,pref de num anuncios
+//v1.2 añadido defincion de porque se usa le device admin la habian rechazado
+
 public class MainActivity extends AppCompatActivity {
 
 
